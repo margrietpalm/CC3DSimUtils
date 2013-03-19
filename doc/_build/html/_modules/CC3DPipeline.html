@@ -1,0 +1,318 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CC3DPipeline &mdash; OpenSimUtils 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="OpenSimUtils 1.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../SimUtils.html">OpenSimUtils 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for CC3DPipeline</h1><div class="highlight"><pre>
+<span class="c">#----- Pre-processing ----#</span>
+<div class="viewcode-block" id="createPBSScripts"><a class="viewcode-back" href="../CC3DPipeline.html#CC3DPipeline.createPBSScripts">[docs]</a><span class="k">def</span> <span class="nf">createPBSScripts</span><span class="p">(</span><span class="n">runid</span><span class="p">,</span><span class="n">joblist</span><span class="p">,</span><span class="n">command</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">ncores</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">ppn</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="s">&#39;batchScripts/&#39;</span><span class="p">,</span><span class="n">xserver</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">python27</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a set of PBS scripts to run a simulation on a cluster. Each script starts with something like:</span>
+<span class="sd">    </span>
+<span class="sd">        #PBS -S /bin/bash</span>
+<span class="sd">        #PBS -lnodes=1:cores12:ppn=11</span>
+<span class="sd">        #PBS -lwalltime=12:00:00</span>
+<span class="sd">    </span>
+<span class="sd">    If these commands are not correct or complete for the cluster you use, edit :func:`~OpenSimUtils.CC3DPipeline.createPBS`. </span>
+<span class="sd">    </span>
+<span class="sd">    For each job in joblist a single line command is added to the script:</span>
+<span class="sd">        </span>
+<span class="sd">        python command jobid &gt; log/jobid.out 2&gt; log/jobid.err &amp;</span>
+<span class="sd">            </span>
+<span class="sd">    :param runid: identifier for the scripts</span>
+<span class="sd">    :type runid: str</span>
+<span class="sd">    :param joblist: list of job identifiers</span>
+<span class="sd">    :param command: command that runs the simulation</span>
+<span class="sd">    :type command: str</span>
+<span class="sd">    :param time: requested walltime on the cluster (hh:mm:ss)</span>
+<span class="sd">    :param ncores: numbor of cores in the requested node</span>
+<span class="sd">    :type ncores: int</span>
+<span class="sd">    :param ppn: number of processers per node that will be used</span>
+<span class="sd">    :type ppn: int</span>
+<span class="sd">    :param path: location where pbs scripts are saved</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    </span>
+<span class="sd">    .. seealso:: :func:`~OpenSimUtils.CC3DPipeline.createPBS`, :func:`~OpenSimUtils.CC3DPipeline.addCommandToPBS`, :func:`~OpenSimUtils.CC3DPipeline.finishPBS`        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nscripts</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">ppn</span> <span class="o">&gt;</span> <span class="n">ncores</span><span class="p">:</span>
+        <span class="n">ppn</span> <span class="o">=</span> <span class="n">ncores</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">jobid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">joblist</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">%</span><span class="n">ppn</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nscripts</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">_finishPBS</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+            <span class="n">fn</span> <span class="o">=</span> <span class="n">path</span><span class="o">+</span><span class="s">&#39;/run_&#39;</span><span class="o">+</span><span class="n">runid</span><span class="o">+</span><span class="s">&#39;_part_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">nscripts</span><span class="p">)</span>
+            <span class="n">_createPBS</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">ncores</span><span class="p">,</span><span class="n">ppn</span><span class="p">,</span><span class="n">xserver</span><span class="p">,</span><span class="n">python27</span><span class="p">)</span>
+            <span class="n">nscripts</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">_addCommandToPBS</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="n">command</span><span class="o">+</span><span class="s">&#39; &#39;</span><span class="o">+</span><span class="n">jobid</span><span class="p">,</span><span class="s">&#39;log/&#39;</span><span class="o">+</span><span class="n">jobid</span><span class="p">)</span>
+    <span class="n">_finishPBS</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+</div>
+<span class="k">def</span> <span class="nf">_createPBS</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">time</span><span class="p">,</span><span class="n">ncores</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ppn</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Create a new pbs script and add initial commands and settings.</span>
+<span class="sd">    </span>
+<span class="sd">    :param filename: filename of the new pbs script</span>
+<span class="sd">    :type filename: str</span>
+<span class="sd">    :param time: requested walltime on the cluster (hh:mm:ss)</span>
+<span class="sd">    :param ncores: numbor of cores in the requested node</span>
+<span class="sd">    :type ncores: int</span>
+<span class="sd">    :param ppn: number of processers per node that will be used</span>
+<span class="sd">    :type ppn: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#PBS -S /bin/bash</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#PBS -lnodes=1&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ncores</span> <span class="o">==</span> <span class="mi">8</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ncores</span> <span class="o">==</span> <span class="mi">12</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">ncores</span> <span class="o">==</span> <span class="mi">16</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;:cores&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ncores</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">ppn</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;:ppn=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ppn</span><span class="p">))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#PBS -lwalltime=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;cd $HOME</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">_addCommandToPBS</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">command</span><span class="p">,</span><span class="n">log</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Add single line command to existing PBS script:</span>
+<span class="sd">    </span>
+<span class="sd">    :param filename: filename of the new pbs script</span>
+<span class="sd">    :type filename: str    </span>
+<span class="sd">    :param command: command that runs the simulation</span>
+<span class="sd">    :type command: str   </span>
+<span class="sd">    :param log: name (with path) of the log files (without extension)</span>
+<span class="sd">    :type log: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command</span><span class="o">+</span><span class="s">&#39; &gt; &#39;</span><span class="o">+</span><span class="n">log</span><span class="o">+</span><span class="s">&#39;.out 2&gt; &#39;</span><span class="o">+</span><span class="n">log</span><span class="o">+</span><span class="s">&#39;.err &amp;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">_finishPBS</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Finish pbs file </span>
+<span class="sd">    </span>
+<span class="sd">    :param filename: filename of the new pbs script</span>
+<span class="sd">    :type filename: str      </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;wait</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="c">#----- Post-processing ----#</span>
+<div class="viewcode-block" id="makeImages"><a class="viewcode-back" href="../CC3DPipeline.html#CC3DPipeline.makeImages">[docs]</a><span class="k">def</span> <span class="nf">makeImages</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">trange</span><span class="p">,</span><span class="n">inpath</span><span class="p">,</span><span class="n">outpath</span><span class="p">,</span><span class="n">cm</span><span class="o">=</span><span class="s">&#39;default.ctb&#39;</span><span class="p">,</span><span class="n">gzipped</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">timestamp</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">bc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span><span class="n">fieldname</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">border</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Make images for a single simulation simulation</span>
+<span class="sd">        </span>
+<span class="sd">    :param id: simulation identifier</span>
+<span class="sd">    :type id: str</span>
+<span class="sd">    :param trange: list of mcs to draw</span>
+<span class="sd">    :param inpath: path containing data files</span>
+<span class="sd">    :type inpath: str</span>
+<span class="sd">    :param outpath: path to save images to</span>
+<span class="sd">    :type outpath: str</span>
+<span class="sd">    :param cm: file containing the colormap</span>
+<span class="sd">    :type cm: str</span>
+<span class="sd">    :param gzipped: data is gzipped</span>
+<span class="sd">    :type gzipped: bool</span>
+<span class="sd">    :param timestamp: add time stamp to the image</span>
+<span class="sd">    :type timestamp: bool</span>
+<span class="sd">    :param label: add id as label to the image</span>
+<span class="sd">    :type label: bool</span>
+<span class="sd">    :param scale: scaling of the image</span>
+<span class="sd">    :type scale: number</span>
+<span class="sd">    :param bc: color of cell boundaries (r,g,b)</span>
+<span class="sd">    :param fontsize: size of the fonts used for label and time stamp; font size will be multiplied by scale.</span>
+<span class="sd">    :type fontsize: int</span>
+<span class="sd">    :param fieldname: name of chemical field</span>
+<span class="sd">    :type fieldname: str</span>
+<span class="sd">    :param border: cut of border pixels</span>
+<span class="sd">    :type border: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">tlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">trange</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">colormap</span> <span class="o">=</span> <span class="n">readColorMap</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">:</span>
+        <span class="n">outfile</span> <span class="o">=</span> <span class="nb">id</span><span class="o">+</span><span class="s">&#39;_&#39;</span><span class="o">+</span><span class="n">string</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">),</span><span class="n">tlen</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.png&#39;</span>    
+        <span class="n">im</span> <span class="o">=</span> <span class="n">makeImage</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">inpath</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">colormap</span><span class="p">,</span><span class="n">timestamp</span><span class="p">,</span><span class="n">label</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span><span class="n">bc</span><span class="p">,</span><span class="n">fontsize</span><span class="p">,</span><span class="n">border</span><span class="p">,</span><span class="n">gzipped</span><span class="p">,</span><span class="n">fieldname</span><span class="p">)</span>
+        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">outpath</span><span class="o">+</span><span class="n">outfile</span><span class="p">)</span>
+    <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trange</span><span class="p">))</span> <span class="o">+</span> <span class="s">&#39; images drawn in &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; seconds&#39;</span>
+</div>
+<div class="viewcode-block" id="getOrderParameterForSim"><a class="viewcode-back" href="../CC3DPipeline.html#CC3DPipeline.getOrderParameterForSim">[docs]</a><span class="k">def</span> <span class="nf">getOrderParameterForSim</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">trange</span><span class="p">,</span><span class="n">inpath</span><span class="p">,</span><span class="n">radii</span><span class="p">,</span><span class="n">border</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">gzipped</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">weighted</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">outpath</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Calculate orderparameters for one simulation. All order parameters are collected and save in a file inpath/id_orderparameter.data</span>
+<span class="sd">    </span>
+<span class="sd">    :param id: simulation identifier</span>
+<span class="sd">    :param trange: range of mcs to calculate</span>
+<span class="sd">    :param inpath: path containing data files    </span>
+<span class="sd">    :param radii: list of radii for wich the order parameter is calculates</span>
+<span class="sd">    :param border: remove border pixels from data</span>
+<span class="sd">    :param gzipped: if True, data is expected to be gzipped, and stored in inpath/id/, and the output file will be gzipped.</span>
+<span class="sd">    </span>
+<span class="sd">    .. seealso:: :func:`~OpenSimUtils.AnalysisUtils.getOrderParameter`</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">inpath</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">gzipped</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outpath</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="nb">id</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="nb">id</span><span class="o">+</span><span class="s">&#39;_orderparameter.data.gz&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="nb">id</span><span class="o">+</span><span class="s">&#39;_orderparameter.data&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">trange</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">radii</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#MCS&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">radii</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trange</span><span class="p">):</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">readSigma</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">inpath</span><span class="p">,</span><span class="n">gzipped</span><span class="p">,</span><span class="n">border</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">)</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="n">getAngleField</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">radii</span><span class="p">):</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">getOrderParameterFromGrid</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">angles</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">weighted</span><span class="p">)</span>          
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Order parameter calculated for &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trange</span><span class="p">))</span><span class="o">+</span><span class="s">&#39; simulations and &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">radii</span><span class="p">))</span><span class="o">+</span><span class="s">&#39; radii in &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; seconds&#39;</span>
+</div>
+<div class="viewcode-block" id="getCompactnessForSim"><a class="viewcode-back" href="../CC3DPipeline.html#CC3DPipeline.getCompactnessForSim">[docs]</a><span class="k">def</span> <span class="nf">getCompactnessForSim</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">trange</span><span class="p">,</span><span class="n">inpath</span><span class="p">,</span><span class="n">outpath</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">gzipped</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">border</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Calculate compactness for one simulation</span>
+<span class="sd">    </span>
+<span class="sd">    :param id: simulation identifier</span>
+<span class="sd">    :param trange: range of mcs to calculate</span>
+<span class="sd">    :param inpath: path containing data files    </span>
+<span class="sd">    :param gzipped: if True, data is expected to be gzipped, and stored in inpath/id/</span>
+<span class="sd">    </span>
+<span class="sd">    .. seealso:: :func:`~OpenSimUtils.AnalysisUtils.getCompactness`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">outpath</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">inpath</span>
+    <span class="k">if</span> <span class="n">gzipped</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">outpath</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="nb">id</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="nb">id</span><span class="o">+</span><span class="s">&#39;_compactness.data.gz&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outpath</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="nb">id</span><span class="o">+</span><span class="s">&#39;_compactness.data&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>    
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">trange</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>            
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trange</span><span class="p">):</span>            
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">readSigma</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">inpath</span><span class="p">,</span><span class="n">gzipped</span><span class="p">,</span><span class="n">border</span><span class="p">)</span>          
+        <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">,</span><span class="n">getCompactness</span><span class="p">(</span><span class="n">getLCC</span><span class="p">(</span><span class="n">sigma</span><span class="p">))]</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#MCS</span><span class="se">\t</span><span class="s">compactness</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;compactness calculated for &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trange</span><span class="p">))</span><span class="o">+</span><span class="s">&#39; morphologies in &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; seconds&#39;</span>
+</div>
+<div class="viewcode-block" id="getClustersForSim"><a class="viewcode-back" href="../CC3DPipeline.html#CC3DPipeline.getClustersForSim">[docs]</a><span class="k">def</span> <span class="nf">getClustersForSim</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">trange</span><span class="p">,</span><span class="n">indir</span><span class="p">,</span><span class="n">outdir</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">th</span><span class="p">,</span><span class="n">minlabsize</span><span class="p">,</span><span class="n">opendisk</span><span class="p">,</span><span class="n">mincellsize</span><span class="p">,</span><span class="n">gzipped</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">border</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">cellTCdict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">:</span>
+        <span class="c">#~ print &#39;find clusters for mcs =&#39;,t</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">readSigma</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">indir</span><span class="p">,</span><span class="n">gzipped</span><span class="o">=</span><span class="n">gzipped</span><span class="p">,</span><span class="n">border</span><span class="o">=</span><span class="n">border</span><span class="p">)</span>
+        <span class="c">#~ sigma = readGrid(indir+&#39;/&#39;+id+&#39;/&#39;+id+&#39;_CF_&#39;+str(t)+&#39;.data.gz&#39;)</span>
+        <span class="n">diffield</span> <span class="o">=</span> <span class="n">getRelativeDirField</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+        <span class="c">#~ diffield = np.loadtxt(indir+&#39;/&#39;+id+&#39;/&#39;+id+&#39;_reldir_r=&#39;+str(r)+&#39;_&#39;+str(t)+&#39;.data.gz&#39;)</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">getCellClusters</span><span class="p">(</span><span class="n">diffield</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="n">th</span><span class="p">,</span><span class="n">minlabsize</span><span class="p">,</span><span class="n">opendisk</span><span class="p">,</span><span class="n">mincellsize</span><span class="p">)</span>            
+        <span class="n">cellids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="c"># remove ECM (sigma=0) from cellids</span>
+        <span class="k">for</span> <span class="n">cid</span><span class="p">,</span><span class="n">cluster</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">csz</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">getClusterSize</span><span class="p">()</span>
+            <span class="c"># save data per cells</span>
+            <span class="k">for</span> <span class="n">cellid</span> <span class="ow">in</span> <span class="n">cluster</span><span class="o">.</span><span class="n">cells</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sigma</span><span class="o">==</span><span class="n">cellid</span><span class="p">)</span>
+                <span class="n">cellTCdict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">cellid</span><span class="p">,</span><span class="n">ClusterCellTC</span><span class="p">(</span><span class="n">cellid</span><span class="p">))</span><span class="o">.</span><span class="n">addTimeStep</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">cid</span><span class="p">,</span><span class="n">csz</span><span class="p">)</span> 
+                <span class="n">cellids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">cellids</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cellids</span><span class="o">==</span><span class="n">cellid</span><span class="p">))</span>                
+        <span class="c"># save data for cells not in a cluster</span>
+        <span class="k">for</span> <span class="n">cellid</span> <span class="ow">in</span> <span class="n">cellids</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cellid</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">sigma</span><span class="o">==</span><span class="n">cellid</span><span class="p">)</span>
+            <span class="n">cellTCdict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">cellid</span><span class="p">,</span><span class="n">ClusterCellTC</span><span class="p">(</span><span class="n">cellid</span><span class="p">))</span><span class="o">.</span><span class="n">addTimeStep</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="c"># write data to file per cell</span>
+    <span class="k">for</span> <span class="n">cellid</span><span class="p">,</span><span class="n">celltc</span> <span class="ow">in</span> <span class="n">cellTCdict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">celltc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">calcMSDTransForCellTC</span><span class="p">(</span><span class="n">celltc</span><span class="o">.</span><span class="n">com</span><span class="p">),</span>
+                            <span class="n">calcMSDRotForCellTC</span><span class="p">(</span><span class="n">celltc</span><span class="o">.</span><span class="n">laxis</span><span class="p">),</span><span class="n">celltc</span><span class="o">.</span><span class="n">clusterId</span><span class="p">,</span><span class="n">celltc</span><span class="o">.</span><span class="n">clusterSize</span><span class="p">))</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outdir</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="nb">id</span><span class="o">+</span><span class="s">&#39;_cell_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">cellid</span><span class="p">))</span><span class="o">+</span><span class="s">&#39;_cluster+MSD.data&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#MCS</span><span class="se">\t</span><span class="s">MSDTrans</span><span class="se">\t</span><span class="s">MSDRot</span><span class="se">\t</span><span class="s">clusterId</span><span class="se">\t</span><span class="s">clusterSize</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> 
+    <span class="k">print</span> <span class="s">&#39;clusters calculated for &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">trange</span><span class="p">))</span><span class="o">+</span><span class="s">&#39; morphologies in &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0</span><span class="p">)</span><span class="o">+</span><span class="s">&#39; seconds&#39;</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../SimUtils.html">OpenSimUtils 1.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Margriet Palm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

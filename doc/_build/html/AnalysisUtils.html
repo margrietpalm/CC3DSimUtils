@@ -1,0 +1,540 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AnalysisUtils &mdash; OpenSimUtils 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="OpenSimUtils 1.0 documentation" href="index.html" />
+    <link rel="next" title="ImageUtils" href="ImageUtils.html" />
+    <link rel="prev" title="Welcome to SimUtils documentation!" href="SimUtils.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ImageUtils.html" title="ImageUtils"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="SimUtils.html" title="Welcome to SimUtils documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="SimUtils.html">OpenSimUtils 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="analysisutils">
+<h1>AnalysisUtils<a class="headerlink" href="#analysisutils" title="Permalink to this headline">¶</a></h1>
+<p>Set of function that do a single analysis.</p>
+<div class="section" id="compactness">
+<h2>Compactness<a class="headerlink" href="#compactness" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="AnalysisUtils.getCompactness">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getCompactness</tt><big>(</big><em>sigma</em>, <em>minval=0</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getCompactness"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getCompactness" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate compactness of a morphology: <span class="math">\(\frac{A_{\text{area}}}{A_{\text{convex hull}}}\)</span> .</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</li>
+<li><strong>minval</strong> (<em>int</em>) &#8211; minimum cell id for non medium pixels</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">compactness</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisUtils.getLCC">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getLCC</tt><big>(</big><em>sigma</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getLCC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getLCC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find largest connected component of an image</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">image with largest connected component</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="order-parameter">
+<h2>Order parameter<a class="headerlink" href="#order-parameter" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="http://en.wikipedia.org/wiki/Liquid_crystal#Order_parameter">order parameter</a> describes the orientational order of a liquid crystal : <span class="math">\(s = \left \langle \frac{ 3\text{cos}^2(\theta)}{2}\quad\right \rangle\)</span>; <span class="math">\(s = 0\;\)</span> for a random sample and <span class="math">\(s = 1\;\)</span> for an isotropic sample. <span class="math">\(\theta\;\)</span> is the angle between the cell direction and the <a class="reference external" href="http://en.wikipedia.org/wiki/Liquid_crystal#Director">director</a>. The director is a dimensionless unit vector. It represents the direction of preferred orientation of cells in the neighborhood of any point. Because there is no physical polarity along the director axis, n and -n are fully equivalent. Here the neighborhood is defined as a circle with center com and radius r.</p>
+<dl class="function">
+<dt id="AnalysisUtils.getDirector">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getDirector</tt><big>(</big><em>com</em>, <em>r</em>, <em>sigma</em>, <em>angles</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getDirector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getDirector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the director of the center of mass of a cell.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>com</strong> &#8211; center of mass of the cell (x,y)</li>
+<li><strong>r</strong> (<em>number</em>) &#8211; radius of neighborhood</li>
+<li><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</li>
+<li><strong>angles</strong> &#8211; numpy array with cell angles (radians)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">director (radians)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisUtils.getOrderParameterFromGrid">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getOrderParameterFromGrid</tt><big>(</big><em>sigma</em>, <em>angles</em>, <em>r</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getOrderParameterFromGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getOrderParameterFromGrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate order parameter for a morphology using the cpm grid data. When the requested radius is larger than the maximum radius of the grid, the global order parameter is calculated with <a class="reference internal" href="#AnalysisUtils.getGlobalOrderParameterFromGrid" title="AnalysisUtils.getGlobalOrderParameterFromGrid"><tt class="xref py py-func docutils literal"><span class="pre">getGlobalOrderParameterFromGrid()</span></tt></a>; otherwise the local order parameter is calculated with <a class="reference internal" href="#AnalysisUtils.getLocalOrderParameterFromGrid" title="AnalysisUtils.getLocalOrderParameterFromGrid"><tt class="xref py py-func docutils literal"><span class="pre">getLocalOrderParameterFromGrid()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</li>
+<li><strong>angles</strong> &#8211; numpy array with cell angles (radians)</li>
+<li><strong>r</strong> (<em>int</em>) &#8211; radius of neighborhood</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#AnalysisUtils.getLocalOrderParameterFromGrid" title="AnalysisUtils.getLocalOrderParameterFromGrid"><tt class="xref py py-func docutils literal"><span class="pre">getLocalOrderParameterFromGrid()</span></tt></a>, <a class="reference internal" href="#AnalysisUtils.getGlobalOrderParameterFromGrid" title="AnalysisUtils.getGlobalOrderParameterFromGrid"><tt class="xref py py-func docutils literal"><span class="pre">getGlobalOrderParameterFromGrid()</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisUtils.getLocalOrderParameterFromGrid">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getLocalOrderParameterFromGrid</tt><big>(</big><em>sigma</em>, <em>angles</em>, <em>r</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getLocalOrderParameterFromGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getLocalOrderParameterFromGrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate local order parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</li>
+<li><strong>angles</strong> &#8211; numpy array with cell angles (radians)</li>
+<li><strong>r</strong> (<em>int</em>) &#8211; radius of neighborhood</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">local order parameter</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#AnalysisUtils.getDirector" title="AnalysisUtils.getDirector"><tt class="xref py py-func docutils literal"><span class="pre">getDirector()</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisUtils.getGlobalOrderParameterFromGrid">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getGlobalOrderParameterFromGrid</tt><big>(</big><em>sigma</em>, <em>angles</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getGlobalOrderParameterFromGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getGlobalOrderParameterFromGrid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate global order parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</li>
+<li><strong>angles</strong> &#8211; numpy array with cell angles (radians)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">global order parameter</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisUtils.getRelativeDirField">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getRelativeDirField</tt><big>(</big><em>sigma</em>, <em>r</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getRelativeDirField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getRelativeDirField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate field with relative director for each pixel. The relative director is the difference to the angle of the cell at that pixel and the relative director on the pixel. Pixels with high values represent unordered areas, such as branchpoints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</li>
+<li><strong>r</strong> (<em>int</em>) &#8211; radius of neighborhood</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">field with relative director values</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#AnalysisUtils.getDirector" title="AnalysisUtils.getDirector"><tt class="xref py py-func docutils literal"><span class="pre">getDirector()</span></tt></a>, <a class="reference internal" href="#AnalysisUtils.getAngleField" title="AnalysisUtils.getAngleField"><tt class="xref py py-func docutils literal"><span class="pre">getAngleField()</span></tt></a></p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="cell-clusters">
+<h2>Cell clusters<a class="headerlink" href="#cell-clusters" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="AnalysisUtils.getCellClusters">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getCellClusters</tt><big>(</big><em>field</em>, <em>sigma</em>, <em>th=15</em>, <em>minlabsize=50</em>, <em>opendisk=1</em>, <em>mincellsize=0.25</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getCellClusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getCellClusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get clusters for a single morphology. Clusters are detected with the following steps:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Remove all pixels that have a value in field higher than a given threshold.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Detect blobs in remaining image with a labeling algorith:</dt>
+<dd><ol class="first last loweralpha simple">
+<li>an opening operation may be performed before labeling.</li>
+<li>areas smaller than a given size are ignored;</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Map each blob on the CPM grid:</dt>
+<dd><ol class="first last loweralpha simple">
+<li>at least a given fraction of the cell must be on the labeled area.</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Check for cells in multiple clusters:</dt>
+<dd><ol class="first last loweralpha simple">
+<li>remove cell from all but biggest cluster;</li>
+<li>remove cluster if it is empty after (a).</li>
+</ol>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>field</strong> &#8211; numpy array with values on which data is seperated</li>
+<li><strong>cells</strong> &#8211; dict with cell identifiers as keys and <tt class="xref py py-class docutils literal"><span class="pre">ClusterCell</span></tt> instances as values</li>
+<li><strong>sigma</strong> &#8211; CPM grid</li>
+<li><strong>th</strong> &#8211; threshold value for step 1</li>
+<li><strong>minlabsize</strong> &#8211; labelled areas smaller than this value are ignored (2b)</li>
+<li><strong>opendisk</strong> &#8211; disk size for opening operation (2a)</li>
+<li><strong>mincellsize</strong> &#8211; minimal fraction of the cell that must be on the labelled area to be added to the cluster</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dictionary with cluster id as key and <a class="reference internal" href="#AnalysisUtils.Cluster" title="AnalysisUtils.Cluster"><tt class="xref py py-class docutils literal"><span class="pre">Cluster</span></tt></a> instances</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#AnalysisUtils.Cluster" title="AnalysisUtils.Cluster"><tt class="xref py py-class docutils literal"><span class="pre">Cluster</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisUtils.Cluster">
+<em class="property">class </em><tt class="descclassname">AnalysisUtils.</tt><tt class="descname">Cluster</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#Cluster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.Cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container for a cell cluster</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>id</strong> &#8211; cluster id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><strong>cells</strong> &#8211; list of ids of the cells in the clusters</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="AnalysisUtils.Cluster.addCell">
+<tt class="descname">addCell</tt><big>(</big><em>cellid</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#Cluster.addCell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.Cluster.addCell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add cell to cluster</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cellid</strong> &#8211; id of cell</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalysisUtils.Cluster.getClusterSize">
+<tt class="descname">getClusterSize</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#Cluster.getClusterSize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.Cluster.getClusterSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate number of cell in cluster</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of cells in cluster</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalysisUtils.Cluster.removeCell">
+<tt class="descname">removeCell</tt><big>(</big><em>cellid</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#Cluster.removeCell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.Cluster.removeCell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove cell from cluster</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cellid</strong> &#8211; id of cell</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalysisUtils.ClusterCellTC">
+<em class="property">class </em><tt class="descclassname">AnalysisUtils.</tt><tt class="descname">ClusterCellTC</tt><big>(</big><em>id</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#ClusterCellTC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.ClusterCellTC" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that holds properties related to a cell at each measured time step. These properties are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>cluster id and size at each time step</li>
+<li>long axis at each time step</li>
+<li>center of mass at eac</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>id</strong> &#8211; cell id</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> &#8211; cell id</li>
+<li><strong>clusterId</strong> &#8211; list of cluster id&#8217;s</li>
+<li><strong>clusterSize</strong> &#8211; list of cluster sizes</li>
+<li><strong>time</strong> &#8211; list of time steps</li>
+<li><strong>laxis</strong> &#8211; 2D array with long axes of the cell</li>
+<li><strong>com</strong> &#8211; 2D array with centers of mass of the cell</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="AnalysisUtils.ClusterCellTC.addTimeStep">
+<tt class="descname">addTimeStep</tt><big>(</big><em>t</em>, <em>pix</em>, <em>cid</em>, <em>csz</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#ClusterCellTC.addTimeStep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.ClusterCellTC.addTimeStep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add time step</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>t</strong> (<em>int</em>) &#8211; time step</li>
+<li><strong>pix</strong> &#8211; cell coordinates ([x1,...,xn],[y1,...,yn])</li>
+<li><strong>cid</strong> (<em>int</em>) &#8211; cluster id</li>
+<li><strong>csz</strong> (<em>int</em>) &#8211; cluster size</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cell-angles">
+<h2>Cell angles<a class="headerlink" href="#cell-angles" title="Permalink to this headline">¶</a></h2>
+<p>The angle of a cell is calculated from the inertia tensor of a cell. From the intertia tensor we calucate the eigenvalues and eigenvectors; the eigenvector that corresponds with the largest eigenvalue represents the direction of the long axis of a cell. The angle between the long axis and the x-axis is the cell angle.</p>
+<dl class="function">
+<dt id="AnalysisUtils.getCellAngle">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getCellAngle</tt><big>(</big><em>pix</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getCellAngle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getCellAngle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate angle of a cell on interval <span class="math">\([0,\pi]\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pix</strong> &#8211; cell coordinates ([x1,...,xn],[y1,...,yn])</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">angle in radians on interval <span class="math">\([0,\pi]\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisUtils.getAngleField">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">getAngleField</tt><big>(</big><em>sigma</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#getAngleField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.getAngleField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get field with the cell angles</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">numpy array with cell angles in radians</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="mean-squared-displacement">
+<h2>Mean squared displacement<a class="headerlink" href="#mean-squared-displacement" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="http://en.wikipedia.org/wiki/Mean_squared_displacement">mean squared displacement</a> describes the displacement of a cell over time with respect to the initial position : <span class="math">\(MSD = \left \langle (x(t) - x(0))^2 \right \rangle\;\)</span>. In a similar manner the mean squared angular displacement can be calculated : <span class="math">\(MSD = \left \langle (\theta(t) - \theta(0))^2 \right \rangle\;\)</span></p>
+<dl class="function">
+<dt id="AnalysisUtils.calcMSDTransForCellTC">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">calcMSDTransForCellTC</tt><big>(</big><em>com</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#calcMSDTransForCellTC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.calcMSDTransForCellTC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the translational MSD for a single object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>com</strong> &#8211; list of centers of mass at each time step</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list with MSD for each time step</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="AnalysisUtils.calcMSDRotForCellTC">
+<tt class="descclassname">AnalysisUtils.</tt><tt class="descname">calcMSDRotForCellTC</tt><big>(</big><em>vecset</em><big>)</big><a class="reference internal" href="_modules/AnalysisUtils.html#calcMSDRotForCellTC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalysisUtils.calcMSDRotForCellTC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the rotational MSD for a single object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vecset</strong> &#8211; list of orientation vectors for each time step</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list with MSD for each time step</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="SimUtils.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">AnalysisUtils</a><ul>
+<li><a class="reference internal" href="#compactness">Compactness</a></li>
+<li><a class="reference internal" href="#order-parameter">Order parameter</a></li>
+<li><a class="reference internal" href="#cell-clusters">Cell clusters</a></li>
+<li><a class="reference internal" href="#cell-angles">Cell angles</a></li>
+<li><a class="reference internal" href="#mean-squared-displacement">Mean squared displacement</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="SimUtils.html"
+                        title="previous chapter">Welcome to SimUtils documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ImageUtils.html"
+                        title="next chapter">ImageUtils</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/AnalysisUtils.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ImageUtils.html" title="ImageUtils"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="SimUtils.html" title="Welcome to SimUtils documentation!"
+             >previous</a> |</li>
+        <li><a href="SimUtils.html">OpenSimUtils 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Margriet Palm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

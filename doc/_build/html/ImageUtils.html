@@ -1,0 +1,227 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ImageUtils &mdash; OpenSimUtils 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="OpenSimUtils 1.0 documentation" href="index.html" />
+    <link rel="next" title="Readers" href="Readers.html" />
+    <link rel="prev" title="AnalysisUtils" href="AnalysisUtils.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Readers.html" title="Readers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="AnalysisUtils.html" title="AnalysisUtils"
+             accesskey="P">previous</a> |</li>
+        <li><a href="SimUtils.html">OpenSimUtils 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="imageutils">
+<h1>ImageUtils<a class="headerlink" href="#imageutils" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="ImageUtils.makeImage">
+<tt class="descclassname">ImageUtils.</tt><tt class="descname">makeImage</tt><big>(</big><em>id</em>, <em>inpath</em>, <em>t</em>, <em>colormap</em>, <em>timestamp=False</em>, <em>label=False</em>, <em>scale=1</em>, <em>bc=None</em>, <em>fontsize=6</em>, <em>border=True</em>, <em>gzipped=True</em>, <em>fieldname=None</em><big>)</big><a class="reference internal" href="_modules/ImageUtils.html#makeImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ImageUtils.makeImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw morphology for one timestep</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>id</strong> &#8211; simulation identifier</li>
+<li><strong>inpath</strong> &#8211; path containing data files</li>
+<li><strong>t</strong> &#8211; time step</li>
+<li><strong>outpath</strong> &#8211; path to save images to</li>
+<li><strong>colormap</strong> &#8211; dictionary with cell types as keys and colors (r,g,b) as values</li>
+<li><strong>timestamp</strong> (<em>bool</em>) &#8211; add time stamp to the image</li>
+<li><strong>label</strong> (<em>bool</em>) &#8211; add id as label to the image</li>
+<li><strong>scale</strong> (<em>number</em>) &#8211; scaling of the image</li>
+<li><strong>bc</strong> &#8211; color of cell boundaries (r,g,b)</li>
+<li><strong>fontsize</strong> (<em>int</em>) &#8211; size of the fonts used for label and time stamp; font size will be multiplied by scale.</li>
+<li><strong>border</strong> (<em>bool</em>) &#8211; cut of border pixels</li>
+<li><strong>gzipped</strong> (<em>bool</em>) &#8211; data is gzipped</li>
+<li><strong>fieldname</strong> (<em>str</em>) &#8211; name of chemical field</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">image object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-func docutils literal"><span class="pre">drawCells()</span></tt>, <tt class="xref py py-func docutils literal"><span class="pre">addTimeStamp()</span></tt>, <tt class="xref py py-func docutils literal"><span class="pre">addLabel()</span></tt>    </p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ImageUtils.drawRelDirField">
+<tt class="descclassname">ImageUtils.</tt><tt class="descname">drawRelDirField</tt><big>(</big><em>field</em>, <em>sigma</em>, <em>scale=1</em><big>)</big><a class="reference internal" href="_modules/ImageUtils.html#drawRelDirField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ImageUtils.drawRelDirField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw gray-scale image of a field of the relative director</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>field</strong> &#8211; numpy array with field</li>
+<li><strong>scale</strong> &#8211; scaling factor</li>
+<li><strong>gv</strong> &#8211; minimum and maximum color value</li>
+<li><strong>raw</strong> &#8211; use raw values of field, otherwise values are mapped on the range of gv</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">image object</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ImageUtils.stackImages">
+<tt class="descclassname">ImageUtils.</tt><tt class="descname">stackImages</tt><big>(</big><em>images</em>, <em>geometry</em>, <em>filename</em>, <em>label=False</em>, <em>title=None</em>, <em>fontsize=20</em>, <em>border=False</em>, <em>scale=1</em>, <em>fontpath='/usr/share/fonts/msttcore/'</em><big>)</big><a class="reference internal" href="_modules/ImageUtils.html#stackImages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ImageUtils.stackImages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stack a set of images together in one image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>images</strong> &#8211; dictionary with labels as keys and image filenames as values</li>
+<li><strong>geometry</strong> &#8211; number of rows and columns (x,y)</li>
+<li><strong>filename</strong> &#8211; target of the stacked image</li>
+<li><strong>label</strong> &#8211; add labels to the subimages</li>
+<li><strong>title</strong> &#8211; overall title for image</li>
+<li><strong>fontsize</strong> &#8211; fontsize for labels and title</li>
+<li><strong>border</strong> (<em>bool</em>) &#8211; add border to subimages</li>
+<li><strong>scale</strong> &#8211; scaling factor of the created picture</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ImageUtils.morphImages">
+<tt class="descclassname">ImageUtils.</tt><tt class="descname">morphImages</tt><big>(</big><em>images</em>, <em>filename</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>xtics=None</em>, <em>ytics=None</em>, <em>fontsize=20</em>, <em>scale=1</em>, <em>border=False</em>, <em>title=None</em>, <em>bcolor=(255</em>, <em>255</em>, <em>255)</em>, <em>fcolor=(0</em>, <em>0</em>, <em>0)</em>, <em>fontpath='/usr/share/fonts/msttcore/'</em>, <em>delta=0</em><big>)</big><a class="reference internal" href="_modules/ImageUtils.html#morphImages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ImageUtils.morphImages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stack a set of images together in one morphospace.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>images</strong> &#8211; 2D array with image filenames</li>
+<li><strong>filename</strong> &#8211; target of the stacked image</li>
+<li><strong>xlabel</strong> &#8211; label to be plotted on x-axis</li>
+<li><strong>ylabel</strong> &#8211; label to be plotted on y-axis</li>
+<li><strong>xtics</strong> &#8211; items on x-axis</li>
+<li><strong>ytics</strong> &#8211; items on y-axis</li>
+<li><strong>fontsize</strong> &#8211; fontsize for labels and title</li>
+<li><strong>scale</strong> &#8211; scaling factor of the created picture</li>
+<li><strong>border</strong> &#8211; add border to subimages</li>
+<li><strong>title</strong> &#8211; overall title for image</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="AnalysisUtils.html"
+                        title="previous chapter">AnalysisUtils</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Readers.html"
+                        title="next chapter">Readers</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/ImageUtils.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Readers.html" title="Readers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="AnalysisUtils.html" title="AnalysisUtils"
+             >previous</a> |</li>
+        <li><a href="SimUtils.html">OpenSimUtils 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Margriet Palm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

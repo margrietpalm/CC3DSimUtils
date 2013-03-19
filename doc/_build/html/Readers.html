@@ -1,0 +1,208 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Readers &mdash; OpenSimUtils 1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="OpenSimUtils 1.0 documentation" href="index.html" />
+    <link rel="next" title="CC3DPipeline" href="CC3DPipeline.html" />
+    <link rel="prev" title="ImageUtils" href="ImageUtils.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="CC3DPipeline.html" title="CC3DPipeline"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ImageUtils.html" title="ImageUtils"
+             accesskey="P">previous</a> |</li>
+        <li><a href="SimUtils.html">OpenSimUtils 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="readers">
+<h1>Readers<a class="headerlink" href="#readers" title="Permalink to this headline">¶</a></h1>
+<p>Collection of function to read data from simulations and settings.</p>
+<span class="target" id="module-Readers"></span><dl class="function">
+<dt id="Readers.readChemField">
+<tt class="descclassname">Readers.</tt><tt class="descname">readChemField</tt><big>(</big><em>simid</em>, <em>t</em>, <em>indir</em>, <em>fieldname</em>, <em>gzipped=True</em>, <em>border=True</em><big>)</big><a class="reference internal" href="_modules/Readers.html#readChemField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Readers.readChemField" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read chemical field from file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>simid</strong> (<em>str</em>) &#8211; simulation identifier</li>
+<li><strong>t</strong> (<em>int</em>) &#8211; time step</li>
+<li><strong>indir</strong> (<em>str</em>) &#8211; path to data files</li>
+<li><strong>fieldname</strong> (<em>str</em>) &#8211; name of the chemical field</li>
+<li><strong>gzipped</strong> (<em>bool</em>) &#8211; data is gzipped (gzipped data is expected to be in indir/simid/)</li>
+<li><strong>border</strong> (<em>bool</em>) &#8211; cut of border pixels</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">numpy array with the levels of the chemical field at each position</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Readers.readColorMap">
+<tt class="descclassname">Readers.</tt><tt class="descname">readColorMap</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/Readers.html#readColorMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Readers.readColorMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read colormap from a file, formatted like: celltype r g b</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211; file with the colormap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dictionary with cell type as keys and colors (r,g,b) as values.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Readers.readSigma">
+<tt class="descclassname">Readers.</tt><tt class="descname">readSigma</tt><big>(</big><em>simid</em>, <em>t</em>, <em>indir</em>, <em>gzipped=True</em>, <em>border=True</em><big>)</big><a class="reference internal" href="_modules/Readers.html#readSigma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Readers.readSigma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read cell field (sigma) from file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>simid</strong> (<em>str</em>) &#8211; simulation identifier</li>
+<li><strong>t</strong> (<em>int</em>) &#8211; time step</li>
+<li><strong>indir</strong> (<em>str</em>) &#8211; path to data files</li>
+<li><strong>gzipped</strong> (<em>bool</em>) &#8211; data is gzipped (gzipped data is expected to be in indir/simid/)</li>
+<li><strong>border</strong> (<em>bool</em>) &#8211; cut of border pixels</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">numpy array with cell id&#8217;s</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Readers.readTau">
+<tt class="descclassname">Readers.</tt><tt class="descname">readTau</tt><big>(</big><em>simid</em>, <em>t</em>, <em>indir</em>, <em>gzipped=True</em>, <em>border=True</em><big>)</big><a class="reference internal" href="_modules/Readers.html#readTau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Readers.readTau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read type field (tau) from file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>simid</strong> (<em>str</em>) &#8211; simulation identifier</li>
+<li><strong>t</strong> (<em>int</em>) &#8211; time step</li>
+<li><strong>indir</strong> (<em>str</em>) &#8211; path to data files</li>
+<li><strong>gzipped</strong> (<em>bool</em>) &#8211; data is gzipped (gzipped data is expected to be in indir/simid/)</li>
+<li><strong>border</strong> (<em>bool</em>) &#8211; cut of border pixels</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">numpy array with cell types</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ImageUtils.html"
+                        title="previous chapter">ImageUtils</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="CC3DPipeline.html"
+                        title="next chapter">CC3DPipeline</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Readers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="CC3DPipeline.html" title="CC3DPipeline"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ImageUtils.html" title="ImageUtils"
+             >previous</a> |</li>
+        <li><a href="SimUtils.html">OpenSimUtils 1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Margriet Palm.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
