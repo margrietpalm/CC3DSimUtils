@@ -1,9 +1,56 @@
+import copy
+import numpy as np
+from mahotas import labeled
+from mahotas import _convex,polygon
+import pymorph as m
+from .Readers import *
+
+def getCoM(pix):
+    """ Calculate center of mass of a cell 
+    
+    :param pix: cell coordinates ([x1,...,xn],[y1,...,yn])
+    :return: center of mass (x,y)
+    """
+    try:
+        a = len(pix[0])
+        cx = 1/float(a)*(np.sum(pix[0]))
+        cy = 1/float(a)*(np.sum(pix[1]))
+    except:
+        print pix
+    return (cx,cy)
+
+def getCellInertiaTensor(pix):
+    """ Get inertia tensor for a cell 
+    
+    :param pix: cell coordinates ([x1,...,xn],[y1,...,yn])
+    :return: inertia tensor [[Ixx,Ixy],[Ixy,Iyy]]
+    """
+    a = len(pix[0])
+    cx = 1/float(a)*(np.sum(pix[0]))
+    cy = 1/float(a)*(np.sum(pix[1]))
+    Ixx = np.sum(np.power(pix[0]-cx,2))
+    Iyy = np.sum(np.power(pix[1]-cy,2))
+    Ixy = -np.sum((pix[0]-cx)*(pix[1]-cy))
+    return np.array([[Ixx,Ixy],[Ixy,Iyy]])
+
+def getCellOrientation(pix):
+    """ Calculate orientation of a cell. The orientation is the eigenvector corresponding to the largest eigenvalue of the cells' inertia tensor.
+    
+    :param pix: cell coordinates ([x1,...,xn],[y1,...,yn])
+    :return: unit vector of the cell orientation
+
+    .. seealso:: :func:`~AnalysisUtils.getCellInertiaTensor`        
+    """    
+    [V,D] = np.linalg.eig(getCellInertiaTensor(pix))
+    return [D[V==max(V)][0][0],D[V==max(V)][0][1]]
 
 def getCellAngle(pix):
     """ Calculate angle of a cell on interval :math:`[0,\pi]`
     
     :param pix: cell coordinates ([x1,...,xn],[y1,...,yn])
     :return: angle in radians on interval :math:`[0,\pi]`
+
+    .. seealso:: :func:`~AnalysisUtils.getCellOrientation`            
     """
     l = getCellOrientation(pix)
     a = np.arctan2(l[1],l[0])
@@ -123,7 +170,7 @@ def getRelativeDirField(sigma,r):
     for i in range(nx):
         for j in range(ny):
             if sigma[i,j] > 0:
-                dir[i,j] = getDirector((i,j),r,sigma,angles,weighted=True)
+                dir[i,j] = getDirector((i,j),r,sigma,angles)
     # calcuate local difference between director and cell angles
     a = copy.deepcopy(angles)
     field = np.abs(dir-a)
@@ -141,13 +188,23 @@ def realconvexhull(bwimg):
     # based on convexhull from mahotas.polygon
     # extra points are added to prevent intersection between the hull and pixel centers
     Y,X = np.where(bwimg)
-    ye = np.array([[2*y-1,2*y+1,2*y+1,2*y-1] for y in Y]).flatten()
-    xe = np.array([[2*x-1,2*x-1,2*x+1,2*x+1] for x in X]).flatten()    
-    ind = np.lexsort((xe,ye))
-    P = list(zip(xe[ind],ye[ind]))
-    if len(P) <= 3:
-        return P
-    return np.array(_convex.convexhull(P))/2.0
+    newim = np.zeros((2*bwimg.shape[0],2*bwimg.shape[1]))
+    for i in range(len(Y)):
+        y = Y[i]
+        x = X[i]
+        newim[2*x-1:2*x+2,2*y-1:2*y+2] = 1
+    return np.array(polygon.convexhull(newim))/2.0
+    
+    #~ ye = np.array([[2*y-1,2*y+1,2*y+1,2*y-1] for y in Y]).flatten()
+    #~ xe = np.array([[2*x-1,2*x-1,2*x+1,2*x+1] for x in X]).flatten()    
+    #~ ind = np.lexsort((xe,ye))
+    #~ P = list(zip(xe[ind],ye[ind]))
+    #~ if len(P) <= 3:
+        #~ return P
+    #~ else:
+        #~ return np.array(_convex.convexhull(P))/2.0
+        #~ return np.array(polygon.convexhull(P))/2.0
+        
 
 def getCompactness(sigma,minval=0):
     """ 
@@ -160,7 +217,7 @@ def getCompactness(sigma,minval=0):
     """
     # 1: create negative image
     (nx,ny) = sigma.shape    
-    imneg = np.uint8(im>sigma)
+    imneg = np.uint8(sigma>minval)
     # 2: find borders of negative image, these are all pixels where a neighbor is not cell
     #    thus, all borders are 2 pixels thick! 
     bim = labeled.borders(np.asarray(imneg))    

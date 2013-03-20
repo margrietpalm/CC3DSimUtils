@@ -1,7 +1,7 @@
 =================
 Readers
 =================
-Collection of function to read data from simulations and settings.
+Collection of functions to read simulation data and other files needed by MIMBSimUtils.
 
 .. automodule:: Readers
    :members:

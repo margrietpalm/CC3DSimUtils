@@ -37,10 +37,10 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'SimUtils'
+master_doc = 'MIMBSimUtils'
 
 # General information about the project.
-project = u'OpenSimUtils'
+project = u'MIMB SimUtils'
 copyright = u'2013, Margriet Palm'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'SimUtilsdoc'
+htmlhelp_basename = 'MIMBSimUtilsdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,7 +183,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'SimUtils.tex', u'SimUtils Documentation',
+  ('index', 'MIMBSimUtils.tex', u'MIMBSimUtils Documentation',
    u'Margriet Palm', 'manual'),
 ]
 
@@ -213,7 +213,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'simutils', u'SimUtils Documentation',
+    ('index', 'mimbsimutils', u'SimUtils Documentation',
      [u'Margriet Palm'], 1)
 ]
 
@@ -227,8 +227,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'SimUtils', u'SimUtils Documentation',
-   u'Margriet Palm', 'SimUtils', 'One line description of project.',
+  ('index', 'MIMBSimUtils', u'MIMBSimUtils Documentation',
+   u'Margriet Palm', 'MIMBSimUtils', 'One line description of project.',
    'Miscellaneous'),
 ]
 

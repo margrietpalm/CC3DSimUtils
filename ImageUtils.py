@@ -3,10 +3,49 @@
 #-------------------------------------------------------------------#
 #                                                                   #
 #*******************************************************************#
-import copy
+import copy,os
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from mahotas import labeled
+from .Readers import *
+
+def _getFont(fontpath,fontsize):
+    try:
+        if os.path.isfile(fontpath+"/times.ttf"):
+            return ImageFont.truetype(fontpath+"/times.ttf", fontsize)        
+        else:
+            #~ return ImageFont.load("ariel.pil",
+            return ImageFont.truetype("times.ttf", fontsize) 
+    except:
+        print 'I cannot use a nice font (freetype support may be missing)'
+        return ImageFont.load_default()
+        
+def addTimeStamp(im,stamp,fs=6,fc=None,fontpath='/usr/share/fonts/msttcore/'):
+    """ Draw a timestamp at the right bottom of the image. """
+    if fc is None:
+        fc = (0,0,0)
+    draw = ImageDraw.Draw(im)
+    fontsize = int(fs)
+    font = _getFont(fontpath,fontsize)
+    (w,h) = draw.textsize(str(stamp),font=font)
+    (nx,ny) = im.size
+    y = ny-h
+    x = nx-w
+    draw.text((x,y),str(stamp),fill=fc,font=font)
+
+def addLabel(im,label,fs=8,fc=None,fontpath='/usr/share/fonts/msttcore/'):
+    """ Draw label at the top center of the image. """
+    if fc is None:
+        fc = (0,0,0)    
+    draw = ImageDraw.Draw(im)
+    fontsize = int(fs)
+    font = _getFont(fontpath,fontsize)    
+    (w,h) = draw.textsize(str(label),font=font)
+    (nx,ny) = im.size
+    y = h
+    x = int((0.5*nx)-w)
+    #~ print 'add label ',x,y
+    draw.text((x,y),str(label),fill=fc,font=font) 
 
 def _getImAsArray(sigma,types,field,colormap,scale=1,nx=None,ny=None,transparant=False,gv=None,bc=None):
     if bc is None:
@@ -136,8 +175,9 @@ def stackImages(images,geometry,filename,label=False,title=None,fontsize=20,bord
     :type border: bool
     :param scale: scaling factor of the created picture
     """
+    if (label) or (title is not None):
+        font = _getFont(fontpath,fontsize)            
     fontsize=int(fontsize*scale)    
-    font = ImageFont.truetype(fontpath+"/times.ttf", fontsize)    
     labels = images.keys()
     nx = 0
     ny = 0
@@ -189,8 +229,6 @@ def stackImages(images,geometry,filename,label=False,title=None,fontsize=20,bord
         draw.text((im.size[0]/2.0-0.5*tsize[0]+offsetX,0),str(title),fill=(0,0,0),font=font)
     
     #----- Save image -----#
-    #~ if scale is not 1:
-        #~ im = im.resize((int(scale*im.size[0]),int(scale*im.size[1])))
     im.save(filename)
     
 def morphImages(images,filename,xlabel=None,ylabel=None,xtics=None,ytics=None,fontsize=20,scale=1,border=False,title=None,bcolor=(255,255,255),fcolor=(0,0,0),fontpath='/usr/share/fonts/msttcore/',delta=0):
@@ -207,9 +245,9 @@ def morphImages(images,filename,xlabel=None,ylabel=None,xtics=None,ytics=None,fo
     :param border: add border to subimages    
     :param title: overall title for image    
     """
-    font = ImageFont.truetype(fontpath+"/times.ttf", fontsize) 
-    tfont = ImageFont.truetype(fontpath+"/times.ttf", int(1.1*fontsize)) 
-    #~ subimsize = Image.open(images[0][0]).size
+    if (xlabel is not None) or (ylabel is not None) or (ytics is not None) or (xtics is not None):
+        font = _getFont(fontpath,fontsize)
+        tfont = _getFont(fontpath,int(1.1*fontsize))
     orgsize = Image.open(images[0][0]).size
     subimsize = (int(scale*orgsize[0]+delta),int(scale*orgsize[1]+delta))
     imsize = [subimsize[0]*len(images[0])-delta,subimsize[1]*len(images)-delta]
@@ -269,7 +307,8 @@ def morphImages(images,filename,xlabel=None,ylabel=None,xtics=None,ytics=None,fo
             if border:
                 draw.rectangle([(x0,y0),(x0+newim.size[0],y0+newim.size[1])],outline=(0,0,0))        
     #----- Draw axis and tics -----#
-    ticsfont = ImageFont.truetype(fontpath+"/times.ttf", int(.75*fontsize)) 
+    if (ytics is not None) or (xtics is not None):
+        ticsfont = _getFont(fontpath,int(.75*fontsize))
     if xtics is not None:
         for i in range(len(xtics)):
             tsize = draw.textsize(str(xtics[i]),font=ticsfont)
