@@ -17,7 +17,7 @@ def _getFont(fontpath,fontsize):
             #~ return ImageFont.load("ariel.pil",
             return ImageFont.truetype("times.ttf", fontsize) 
     except:
-        print 'I cannot use a nice font (freetype support may be missing)'
+        print 'I cannot use a nice font either because I cannot find the fonts (specify fontpath) or because ther is no freetype support.'
         return ImageFont.load_default()
         
 def addTimeStamp(im,stamp,fs=6,fc=None,fontpath='/usr/share/fonts/msttcore/'):

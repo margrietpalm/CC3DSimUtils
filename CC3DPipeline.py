@@ -41,7 +41,7 @@ def createPBSScripts(runid,joblist,command,time,ncores=8,ppn=8,path='batchScript
             if nscripts > 0:
                 finishPBS(fn)
             fn = path+'/run_'+runid+'_part_'+str(nscripts)
-            createPBS(fn,time,ncores,ppn,xserver,python27)
+            createPBS(fn,time,ncores,ppn)
             nscripts += 1
         addCommandToPBS(fn,command+' '+jobid,'log/'+jobid)
     finishPBS(fn)

@@ -5,6 +5,9 @@ from mahotas import _convex,polygon
 import pymorph as m
 from .Readers import *
 
+norm = lambda v: np.array(v)/np.linalg.norm(np.array(v))
+angle = lambda x,y: np.arccos(np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y)))
+
 def getCoM(pix):
     """ Calculate center of mass of a cell 
     
