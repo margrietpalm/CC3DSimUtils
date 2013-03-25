@@ -2,8 +2,6 @@
 CC3DPipeline
 =================
 
-Set of function to streamline simulation setup and post-processing. Most function are designed to process data from a single simulation.
-
 ---------------------------
 Pre-Processing
 ---------------------------

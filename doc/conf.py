@@ -16,7 +16,7 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../src/'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -37,7 +37,7 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'MIMBSimUtils'
+master_doc = 'CC3DSimUtils'
 
 # General information about the project.
 project = u'MIMB SimUtils'
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'MIMBSimUtilsdoc'
+htmlhelp_basename = 'CC3DSimUtilsdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,7 +183,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'MIMBSimUtils.tex', u'MIMBSimUtils Documentation',
+  ('CC3DSimUtils', 'CC3DSimUtils.tex', u'CC3DSimUtils Documentation',
    u'Margriet Palm', 'manual'),
 ]
 
@@ -213,7 +213,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'mimbsimutils', u'SimUtils Documentation',
+    ('index', 'CC3DSimUtils', u'SimUtils Documentation',
      [u'Margriet Palm'], 1)
 ]
 
@@ -227,8 +227,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'MIMBSimUtils', u'MIMBSimUtils Documentation',
-   u'Margriet Palm', 'MIMBSimUtils', 'One line description of project.',
+  ('index', 'CC3DSimUtils', u'CC3DSimUtils Documentation',
+   u'Margriet Palm', 'CC3DSimUtils', 'One line description of project.',
    'Miscellaneous'),
 ]
 

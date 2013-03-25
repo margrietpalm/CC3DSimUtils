@@ -1,9 +1,29 @@
+#-------------------------------------------------------------------#
+# Copyright 2012-2013 Margriet Palm                                 #
+#                                                                   #
+# CC3DSimUtils is free software; you can redistribute               #
+# it and/or modify it under the terms of the GNU General Public     #    
+# License as published by the Free Software Foundation; either      #
+# version 3 of the License, or (at your option) any later version.  #
+#                                                                   #
+# CC3DSimUtils is distributed in the hope that it will be useful,   #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of    #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU  #
+# General Public License for more details.                          #
+#                                                                   #
+# You should have received a copy of the GNU General Public License #
+# along with CC3DSimUtils; if not, write to the Free Software       #
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA         #
+# 02110-1301 USA                                                    #
+#                                                                   #
+#-------------------------------------------------------------------#
+
 import copy
 import numpy as np
 from mahotas import labeled
 from mahotas import _convex,polygon
 import pymorph as m
-from .Readers import *
+from Readers import *
 
 norm = lambda v: np.array(v)/np.linalg.norm(np.array(v))
 angle = lambda x,y: np.arccos(np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y)))
@@ -74,23 +94,23 @@ def getAngleField(sigma):
         angles[sigma==id] = getCellAngle(np.where(sigma==id))
     return angles
     
-def getOrderParameterFromGrid(sigma,angles,r):
-    """ Calculate order parameter for a morphology using the cpm grid data. When the requested radius is larger than the maximum radius of the grid, the global order parameter is calculated with :func:`~AnalysisUtils.getGlobalOrderParameterFromGrid`; otherwise the local order parameter is calculated with :func:`~AnalysisUtils.getLocalOrderParameterFromGrid`.
+def getOrderParameter(sigma,angles,r):
+    """ Calculate order parameter for a morphology using the cpm grid data. When the requested radius is larger than the maximum radius of the grid, the global order parameter is calculated with :func:`~AnalysisUtils.getGlobalOrderParameter`; otherwise the local order parameter is calculated with :func:`~AnalysisUtils.getLocalOrderParameter`.
     
     :param sigma: numpy array with cell id's
     :param angles: numpy array with cell angles (radians)
     :param r: radius of neighborhood    
     :type r: int
     
-    .. seealso:: :func:`~AnalysisUtils.getLocalOrderParameterFromGrid`, :func:`~AnalysisUtils.getGlobalOrderParameterFromGrid`
+    .. seealso:: :func:`~AnalysisUtils.getLocalOrderParameter`, :func:`~AnalysisUtils.getGlobalOrderParameter`
     """    
     (nx,ny) = sigma.shape
     if r < np.sqrt(nx**2+ny**2):
-        return getLocalOrderParameterFromGrid(sigma,angles,r)
+        return getLocalOrderParameter(sigma,angles,r)
     else:
-        return getGlobalOrderParameterFromGrid(sigma,angles)
+        return getGlobalOrderParameter(sigma,angles)
 
-def getLocalOrderParameterFromGrid(sigma,angles,r):
+def getLocalOrderParameter(sigma,angles,r):
     """ Calculate local order parameter.
     
     :param sigma: numpy array with cell id's
@@ -109,11 +129,12 @@ def getLocalOrderParameterFromGrid(sigma,angles,r):
         a = angles[np.where(sigma==id)][0]
         A = getDirector(getCoM(np.where(sigma==id)),r,sigma,angles)        
         dA = abs(a-A) if abs(a-A) < 90 else 180-abs(a-A)
-        s += (3*np.power(np.cos((2*np.pi*dA)/360.0),2)-1)/2.0
+        #~ s += (3*np.power(np.cos(dA),2)-1)/2.0
+        s += np.cos(2*dA)        
         n += 1
     return s/n
 
-def getGlobalOrderParameterFromGrid(sigma,angles):
+def getGlobalOrderParameter(sigma,angles):
     """ Calculate global order parameter.
     
     :param sigma: numpy array with cell id's
@@ -124,7 +145,8 @@ def getGlobalOrderParameterFromGrid(sigma,angles):
     A = np.mean(a)
     dA = np.abs(a-A)
     dA[dA > 90] = np.abs(dA[dA > 90]-180)
-    return np.mean((3*np.power(np.cos((2*np.pi*dA)/360.0),2)-1)/2.0)
+    return np.mean(np.cos(2*dA))    
+    #~ return np.mean((3*np.power(np.cos(dA),2)-1)/2.0)
 
 def getDirector(com,r,sigma,angles):
     """ Find the director of the center of mass of a cell. 
@@ -197,17 +219,6 @@ def realconvexhull(bwimg):
         x = X[i]
         newim[2*x-1:2*x+2,2*y-1:2*y+2] = 1
     return np.array(polygon.convexhull(newim))/2.0
-    
-    #~ ye = np.array([[2*y-1,2*y+1,2*y+1,2*y-1] for y in Y]).flatten()
-    #~ xe = np.array([[2*x-1,2*x-1,2*x+1,2*x+1] for x in X]).flatten()    
-    #~ ind = np.lexsort((xe,ye))
-    #~ P = list(zip(xe[ind],ye[ind]))
-    #~ if len(P) <= 3:
-        #~ return P
-    #~ else:
-        #~ return np.array(_convex.convexhull(P))/2.0
-        #~ return np.array(polygon.convexhull(P))/2.0
-        
 
 def getCompactness(sigma,minval=0):
     """ 
@@ -248,25 +259,19 @@ def getLCC(sigma):
     return lab==np.where(sizes==max(sizes[1:len(sizes)]))[0][0]
     
 def getCellClusters(field,sigma,th=15,minlabsize=50,opendisk=1,mincellsize=.25):    
-    """ Get clusters for a single morphology. Clusters are detected with the following steps:
-        
-        1) Remove all pixels that have a value in field higher than a given threshold.
-        2) Detect blobs in remaining image with a labeling algorith:
-            a. an opening operation may be performed before labeling.        
-            b. areas smaller than a given size are ignored;
-        3) Map each blob on the CPM grid:
-            a. at least a given fraction of the cell must be on the labeled area.
-        4) Check for cells in multiple clusters:
-            a. remove cell from all but biggest cluster;
-            b. remove cluster if it is empty after (a).
+    """ Get clusters for a single morphology. 
     
     :param field: numpy array with values on which data is seperated
     :param cells: dict with cell identifiers as keys and :class:`~Cell.ClusterCell` instances as values
     :param sigma: CPM grid
     :param th: threshold value for step 1
+    :type th: number
     :param minlabsize: labelled areas smaller than this value are ignored (2b)
+    :type minlabsize: int
     :param opendisk: disk size for opening operation (2a)
+    :type opendisk: int
     :param mincellsize: minimal fraction of the cell that must be on the labelled area to be added to the cluster
+    :type mincellsize: number
     :return: dictionary with cluster id as key and :class:`~AnalysisUtils.Cluster` instances
     
     .. seealso:: :class:`~AnalysisUtils.Cluster` 
@@ -412,7 +417,7 @@ class ClusterCellTC():
 
         * cluster id and size at each time step
         * long axis at each time step
-        * center of mass at eac
+        * center of mass at each time step
     
     :param id: cell id
     :ivar id: cell id

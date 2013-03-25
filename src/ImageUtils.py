@@ -1,13 +1,28 @@
-#*******************************************************************#
+#-------------------------------------------------------------------#
+# Copyright 2012-2013 Margriet Palm                                 #
+#                                                                   #
+# CC3DSimUtils is free software; you can redistribute               #
+# it and/or modify it under the terms of the GNU General Public     #    
+# License as published by the Free Software Foundation; either      #
+# version 3 of the License, or (at your option) any later version.  #
+#                                                                   #
+# CC3DSimUtils is distributed in the hope that it will be useful,   #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of    #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU  #
+# General Public License for more details.                          #
+#                                                                   #
+# You should have received a copy of the GNU General Public License #
+# along with CC3DSimUtils; if not, write to the Free Software       #
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA         #
+# 02110-1301 USA                                                    #
 #                                                                   #
 #-------------------------------------------------------------------#
-#                                                                   #
-#*******************************************************************#
+
 import copy,os
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont
 from mahotas import labeled
-from .Readers import *
+from Readers import *
 
 def _getFont(fontpath,fontsize):
     try:
@@ -21,7 +36,18 @@ def _getFont(fontpath,fontsize):
         return ImageFont.load_default()
         
 def addTimeStamp(im,stamp,fs=6,fc=None,fontpath='/usr/share/fonts/msttcore/'):
-    """ Draw a timestamp at the right bottom of the image. """
+    """ Draw a timestamp at the right bottom of the image.
+    
+    :param im: PIL image to add time stamp to
+    :param stamp: time stamp
+    :type stamp: str
+    :param fs: font size (only for freetype fonts)
+    :type fs: int
+    :param fc: font color (r,g,b)
+    :param fontpath: path to freetype fonts
+    :type fontpath: str
+    
+    """
     if fc is None:
         fc = (0,0,0)
     draw = ImageDraw.Draw(im)
@@ -34,7 +60,18 @@ def addTimeStamp(im,stamp,fs=6,fc=None,fontpath='/usr/share/fonts/msttcore/'):
     draw.text((x,y),str(stamp),fill=fc,font=font)
 
 def addLabel(im,label,fs=8,fc=None,fontpath='/usr/share/fonts/msttcore/'):
-    """ Draw label at the top center of the image. """
+    """ Draw label at the top center of the image.
+    
+    :param im: PIL image to add time stamp to
+    :param label: label
+    :type label: str
+    :param fs: font size (only for freetype fonts)
+    :type fs: int
+    :param fc: font color (r,g,b)
+    :param fontpath: path to freetype fonts
+    :type fontpath: str
+    
+    """
     if fc is None:
         fc = (0,0,0)    
     draw = ImageDraw.Draw(im)
@@ -91,18 +128,21 @@ def _getImAsArray(sigma,types,field,colormap,scale=1,nx=None,ny=None,transparant
             if tp == 0:
                 continue
             imnew[types==tp] = colormap[tp]
-    #~ imnew[types==0] = colormap[0]
     # set border black
     imnew[bim] = bc
     return imnew,sigma,np.asarray(tim)
 
-def makeImage(id,inpath,t,colormap,timestamp=False,label=False,scale=1,bc=None,fontsize=6,border=True,gzipped=True,fieldname=None):
+def makeImage(id,inpath,t,colormap,timestamp=False,label=False,scale=1,bc=None,fontsize=6,border=True,gzipped=True,fieldname=None,fontpath='/usr/share/fonts/msttcore/'):
     """ Draw morphology for one timestep 
     
     :param id: simulation identifier
+    :type id: str
     :param inpath: path containing data files
+    :type inpath: str
     :param t: time step
+    :type t: int
     :param outpath: path to save images to
+    :type outpath: str
     :param colormap: dictionary with cell types as keys and colors (r,g,b) as values
     :param timestamp: add time stamp to the image
     :type timestamp: bool
@@ -118,7 +158,9 @@ def makeImage(id,inpath,t,colormap,timestamp=False,label=False,scale=1,bc=None,f
     :param gzipped: data is gzipped
     :type gzipped: bool    
     :param fieldname: name of chemical field
-    :type fieldname: str    
+    :type fieldname: str   
+    :param fontpath: path to freetype fonts
+    :type fontpath: str    
     :return: image object
     
     .. seealso:: :func:`~ImageUtils.drawCells`, :func:`~ImageUtils.addTimeStamp`, :func:`~ImageUtils.addLabel`    
@@ -135,19 +177,19 @@ def makeImage(id,inpath,t,colormap,timestamp=False,label=False,scale=1,bc=None,f
     im = im.rotate(90)
     if timestamp:
         fs = int(fontsize*(nx/200.0)*scale)
-        addTimeStamp(im,str(t),fs,fc=bc)
+        addTimeStamp(im,str(t),fs,fc=bc,fontpath=fontpath)
     if label:
         fs = int(1.25*fontsize*(nx/200.0)*scale)
-        addLabel(im,str(id),fs,fc=bc)
+        addLabel(im,str(id),fs,fc=bc,fontpath=fontpath)
     return im
 
 def drawRelDirField(field,sigma,scale=1):
-    """ Draw gray-scale image of a field of the relative director
+    """ Draw gray-scale image of a field representing the relative director
     
-    :param field: numpy array with field
+    :param field: numpy array with relative director
+    :param sigma: numpy array with cell id's    
     :param scale: scaling factor
-    :param gv: minimum and maximum color value
-    :param raw: use raw values of field, otherwise values are mapped on the range of gv
+    :type scale: number
     :return: image object
     """
     (nx,ny) = field.shape
@@ -159,7 +201,6 @@ def drawRelDirField(field,sigma,scale=1):
     fim.convert("RGB")
     im = Image.fromarray(np.uint8(np.dstack((np.asarray(fim),np.asarray(fim),np.asarray(fim)))))
     im = im.transpose(Image.FLIP_TOP_BOTTOM)
-    #~ im = im.rotate(90)    
     return im
     
 def stackImages(images,geometry,filename,label=False,title=None,fontsize=20,border=False,scale=1,fontpath="/usr/share/fonts/msttcore/"):
@@ -168,12 +209,19 @@ def stackImages(images,geometry,filename,label=False,title=None,fontsize=20,bord
     :param images: dictionary with labels as keys and image filenames as values
     :param geometry: number of rows and columns (x,y)
     :param filename: target of the stacked image
+    :type filename: str
     :param label: add labels to the subimages
+    :type label: bool
     :param title: overall title for image
-    :param fontsize: fontsize for labels and title
+    :type title: str
+    :param fontsize: font size (only for freetype fonts)
+    :type fontsize: int
     :param border: add border to subimages
     :type border: bool
     :param scale: scaling factor of the created picture
+    :type scale: number
+    :param fontpath: path to freetype fonts
+    :type fontpath: str
     """
     if (label) or (title is not None):
         font = _getFont(fontpath,fontsize)            
@@ -236,14 +284,27 @@ def morphImages(images,filename,xlabel=None,ylabel=None,xtics=None,ytics=None,fo
     
     :param images: 2D array with image filenames
     :param filename: target of the stacked image
+    :type filename: str
     :param xlabel: label to be plotted on x-axis
+    :type xlabel: str
     :param ylabel: label to be plotted on y-axis
-    :param xtics: items on x-axis
-    :param ytics: items on y-axis
+    :param ylabel: str
+    :param xtics: list of labels on x-axis
+    :param ytics: list of labels on y-axis
     :param fontsize: fontsize for labels and title
+    :type fontsize: int
     :param scale: scaling factor of the created picture
+    :type scale: number
     :param border: add border to subimages    
+    :type border: bool
     :param title: overall title for image    
+    :type title: str
+    :param bcolor: background color (r,g,b)
+    :param fcolor: font color (r,g,b)
+    :param fontpath: path to freetype fonts
+    :type fontpath: str  
+    :param delta: extra space between images
+    :type delta: number
     """
     if (xlabel is not None) or (ylabel is not None) or (ytics is not None) or (xtics is not None):
         font = _getFont(fontpath,fontsize)

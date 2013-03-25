@@ -1,11 +1,31 @@
+#-------------------------------------------------------------------#
+# Copyright 2012-2013 Margriet Palm                                 #
+#                                                                   #
+# CC3DSimUtils is free software; you can redistribute               #
+# it and/or modify it under the terms of the GNU General Public     #    
+# License as published by the Free Software Foundation; either      #
+# version 3 of the License, or (at your option) any later version.  #
+#                                                                   #
+# CC3DSimUtils is distributed in the hope that it will be useful,   #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of    #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU  #
+# General Public License for more details.                          #
+#                                                                   #
+# You should have received a copy of the GNU General Public License #
+# along with CC3DSimUtils; if not, write to the Free Software       #
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA         #
+# 02110-1301 USA                                                    #
+#                                                                   #
+#-------------------------------------------------------------------#
+
 import time,string
 import numpy as np
-from .Readers import *
-from .AnalysisUtils import *
-from .ImageUtils import *
+from Readers import *
+from AnalysisUtils import *
+from ImageUtils import *
 
 #----- Pre-processing ----#
-def createPBSScripts(runid,joblist,command,time,ncores=8,ppn=8,path='batchScripts/'):
+def createPBSScripts(runid,joblist,command,time,ncores=8,ppn=8,path='clusterScripts/'):
     """ Create a set of PBS scripts to run a simulation on a cluster. Each script starts with something like:
     
         #PBS -S /bin/bash
@@ -24,6 +44,7 @@ def createPBSScripts(runid,joblist,command,time,ncores=8,ppn=8,path='batchScript
     :param command: command that runs the simulation
     :type command: str
     :param time: requested walltime on the cluster (hh:mm:ss)
+    :type time: str
     :param ncores: numbor of cores in the requested node
     :type ncores: int
     :param ppn: number of processers per node that will be used
@@ -52,6 +73,7 @@ def createPBS(filename,time,ncores=None,ppn=None):
     :param filename: filename of the new pbs script
     :type filename: str
     :param time: requested walltime on the cluster (hh:mm:ss)
+    :type time: str
     :param ncores: numbor of cores in the requested node
     :type ncores: int
     :param ppn: number of processers per node that will be used
@@ -136,7 +158,7 @@ def makeImages(id,trange,inpath,outpath,cm='default.ctb',gzipped=False,timestamp
     print str(len(trange)) + ' images drawn in '+str(time.time()-t0)+' seconds'
 
 def getOrderParameterForSim(id,trange,inpath,radii,gzipped=False,border=True,outpath=None):
-    """ Calculate orderparameters for one simulation. All order parameters are collected and save in a file inpath/id_orderparameter.data
+    """ Calculate orderparameters for one simulation. All order parameters are collected and saved in a file outpath/id_orderparameter.data
     
     :param id: simulation identifier
     :type id: str
@@ -151,7 +173,7 @@ def getOrderParameterForSim(id,trange,inpath,radii,gzipped=False,border=True,out
     :param outpath: path where order parameter data will be saved, if omitted outpath = inpath
     :type outpath: str
     
-    .. seealso:: :func:`~AnalysisUtils.getOrderParameterFromGrid`
+    .. seealso:: :func:`~AnalysisUtils.getOrderParameter`
     """    
     if outpath is None:
         outpath = inpath
@@ -171,16 +193,16 @@ def getOrderParameterForSim(id,trange,inpath,radii,gzipped=False,border=True,out
         data[i,0] = t
         angles = getAngleField(sigma)
         for j,r in enumerate(radii):
-            data[i,j+1] = getOrderParameterFromGrid(sigma,angles,r)          
+            data[i,j+1] = getOrderParameter(sigma,angles,r)          
     np.savetxt(f,data)
     f.close()
     print 'Order parameter calculated for '+str(len(trange))+' simulations and '+str(len(radii))+' radii in '+str(time.time()-t0)+' seconds'
 
 def getCompactnessForSim(id,trange,inpath,gzipped=False,border=True,outpath=None):
-    """ Calculate compactness for one simulation
-    
+    """ Calculate compactness for one simulation, the compactness is in a file: outpath/id_compactness.data
+
     :param id: simulation identifier
-    :type id: stre
+    :type id: str
     :param trange: list of time steps for which the compactness is calculated
     :param inpath: path to data 
     :type inpath: str 

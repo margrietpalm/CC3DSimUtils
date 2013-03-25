@@ -3,14 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to SimUtils documentation!
+Welcome to MIMBSimUtils documentation!
 ======================================
 
 Contents:
 
 .. toctree::
    :maxdepth: 3
-	
+
+   Preq
    AnalysisUtils
    ImageUtils
    Readers
@@ -21,5 +22,4 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

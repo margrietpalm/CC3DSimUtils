@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AnalysisUtils.html" title="AnalysisUtils"
              accesskey="P">previous</a> |</li>
-        <li><a href="MIMBSimUtils.html">MIMB SimUtils 1.0 documentation</a> &raquo;</li> 
+        <li><a href="CC3DSimUtils.html">MIMB SimUtils 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,17 +58,17 @@
 <h1>ImageUtils<a class="headerlink" href="#imageutils" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="ImageUtils.makeImage">
-<tt class="descclassname">ImageUtils.</tt><tt class="descname">makeImage</tt><big>(</big><em>id</em>, <em>inpath</em>, <em>t</em>, <em>colormap</em>, <em>timestamp=False</em>, <em>label=False</em>, <em>scale=1</em>, <em>bc=None</em>, <em>fontsize=6</em>, <em>border=True</em>, <em>gzipped=True</em>, <em>fieldname=None</em><big>)</big><a class="reference internal" href="_modules/ImageUtils.html#makeImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ImageUtils.makeImage" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ImageUtils.</tt><tt class="descname">makeImage</tt><big>(</big><em>id</em>, <em>inpath</em>, <em>t</em>, <em>colormap</em>, <em>timestamp=False</em>, <em>label=False</em>, <em>scale=1</em>, <em>bc=None</em>, <em>fontsize=6</em>, <em>border=True</em>, <em>gzipped=True</em>, <em>fieldname=None</em>, <em>fontpath='/usr/share/fonts/msttcore/'</em><big>)</big><a class="reference internal" href="_modules/ImageUtils.html#makeImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ImageUtils.makeImage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draw morphology for one timestep</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>id</strong> &#8211; simulation identifier</li>
-<li><strong>inpath</strong> &#8211; path containing data files</li>
-<li><strong>t</strong> &#8211; time step</li>
-<li><strong>outpath</strong> &#8211; path to save images to</li>
+<li><strong>id</strong> (<em>str</em>) &#8211; simulation identifier</li>
+<li><strong>inpath</strong> (<em>str</em>) &#8211; path containing data files</li>
+<li><strong>t</strong> (<em>int</em>) &#8211; time step</li>
+<li><strong>outpath</strong> (<em>str</em>) &#8211; path to save images to</li>
 <li><strong>colormap</strong> &#8211; dictionary with cell types as keys and colors (r,g,b) as values</li>
 <li><strong>timestamp</strong> (<em>bool</em>) &#8211; add time stamp to the image</li>
 <li><strong>label</strong> (<em>bool</em>) &#8211; add id as label to the image</li>
@@ -78,6 +78,7 @@
 <li><strong>border</strong> (<em>bool</em>) &#8211; cut of border pixels</li>
 <li><strong>gzipped</strong> (<em>bool</em>) &#8211; data is gzipped</li>
 <li><strong>fieldname</strong> (<em>str</em>) &#8211; name of chemical field</li>
+<li><strong>fontpath</strong> (<em>str</em>) &#8211; path to freetype fonts</li>
 </ul>
 </td>
 </tr>
@@ -95,16 +96,15 @@
 <dl class="function">
 <dt id="ImageUtils.drawRelDirField">
 <tt class="descclassname">ImageUtils.</tt><tt class="descname">drawRelDirField</tt><big>(</big><em>field</em>, <em>sigma</em>, <em>scale=1</em><big>)</big><a class="reference internal" href="_modules/ImageUtils.html#drawRelDirField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ImageUtils.drawRelDirField" title="Permalink to this definition">¶</a></dt>
-<dd><p>Draw gray-scale image of a field of the relative director</p>
+<dd><p>Draw gray-scale image of a field representing the relative director</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>field</strong> &#8211; numpy array with field</li>
-<li><strong>scale</strong> &#8211; scaling factor</li>
-<li><strong>gv</strong> &#8211; minimum and maximum color value</li>
-<li><strong>raw</strong> &#8211; use raw values of field, otherwise values are mapped on the range of gv</li>
+<li><strong>field</strong> &#8211; numpy array with relative director</li>
+<li><strong>sigma</strong> &#8211; numpy array with cell id&#8217;s</li>
+<li><strong>scale</strong> (<em>number</em>) &#8211; scaling factor</li>
 </ul>
 </td>
 </tr>
@@ -126,12 +126,13 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>images</strong> &#8211; dictionary with labels as keys and image filenames as values</li>
 <li><strong>geometry</strong> &#8211; number of rows and columns (x,y)</li>
-<li><strong>filename</strong> &#8211; target of the stacked image</li>
-<li><strong>label</strong> &#8211; add labels to the subimages</li>
-<li><strong>title</strong> &#8211; overall title for image</li>
-<li><strong>fontsize</strong> &#8211; fontsize for labels and title</li>
+<li><strong>filename</strong> (<em>str</em>) &#8211; target of the stacked image</li>
+<li><strong>label</strong> (<em>bool</em>) &#8211; add labels to the subimages</li>
+<li><strong>title</strong> (<em>str</em>) &#8211; overall title for image</li>
+<li><strong>fontsize</strong> (<em>int</em>) &#8211; font size (only for freetype fonts)</li>
 <li><strong>border</strong> (<em>bool</em>) &#8211; add border to subimages</li>
-<li><strong>scale</strong> &#8211; scaling factor of the created picture</li>
+<li><strong>scale</strong> (<em>number</em>) &#8211; scaling factor of the created picture</li>
+<li><strong>fontpath</strong> (<em>str</em>) &#8211; path to freetype fonts</li>
 </ul>
 </td>
 </tr>
@@ -149,15 +150,20 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>images</strong> &#8211; 2D array with image filenames</li>
-<li><strong>filename</strong> &#8211; target of the stacked image</li>
-<li><strong>xlabel</strong> &#8211; label to be plotted on x-axis</li>
+<li><strong>filename</strong> (<em>str</em>) &#8211; target of the stacked image</li>
+<li><strong>xlabel</strong> (<em>str</em>) &#8211; label to be plotted on x-axis</li>
 <li><strong>ylabel</strong> &#8211; label to be plotted on y-axis</li>
-<li><strong>xtics</strong> &#8211; items on x-axis</li>
-<li><strong>ytics</strong> &#8211; items on y-axis</li>
-<li><strong>fontsize</strong> &#8211; fontsize for labels and title</li>
-<li><strong>scale</strong> &#8211; scaling factor of the created picture</li>
-<li><strong>border</strong> &#8211; add border to subimages</li>
-<li><strong>title</strong> &#8211; overall title for image</li>
+<li><strong>ylabel</strong> &#8211; str</li>
+<li><strong>xtics</strong> &#8211; list of labels on x-axis</li>
+<li><strong>ytics</strong> &#8211; list of labels on y-axis</li>
+<li><strong>fontsize</strong> (<em>int</em>) &#8211; fontsize for labels and title</li>
+<li><strong>scale</strong> (<em>number</em>) &#8211; scaling factor of the created picture</li>
+<li><strong>border</strong> (<em>bool</em>) &#8211; add border to subimages</li>
+<li><strong>title</strong> (<em>str</em>) &#8211; overall title for image</li>
+<li><strong>bcolor</strong> &#8211; background color (r,g,b)</li>
+<li><strong>fcolor</strong> &#8211; font color (r,g,b)</li>
+<li><strong>fontpath</strong> (<em>str</em>) &#8211; path to freetype fonts</li>
+<li><strong>delta</strong> (<em>number</em>) &#8211; extra space between images</li>
 </ul>
 </td>
 </tr>
@@ -216,7 +222,7 @@
         <li class="right" >
           <a href="AnalysisUtils.html" title="AnalysisUtils"
              >previous</a> |</li>
-        <li><a href="MIMBSimUtils.html">MIMB SimUtils 1.0 documentation</a> &raquo;</li> 
+        <li><a href="CC3DSimUtils.html">MIMB SimUtils 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
