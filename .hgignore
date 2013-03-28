@@ -3,5 +3,6 @@ syntax: glob
 *.pyc
 .project
 .pydevproject
-doc/_static
-doc/_templates
+doc/src/_static
+doc/src/_templates
+doc/src/_build

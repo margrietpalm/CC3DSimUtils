@@ -277,7 +277,7 @@ class Experiment:
         for rule in energy: 
             type1 = rule.getAttribute("Type1")
             type2 = rule.getAttribute("Type2")
-            if ((type1 in _type1) and (type2 in _type2)) or ((type1 in _type2) and (type2 in _type1)) :
+            if ((type1 == _type1) and (type2 == _type2)) or ((type1 == _type2) and (type2 == _type1)):
                 rule.childNodes[0].nodeValue = str(J)
                 eFound = True
                 break

@@ -41,6 +41,17 @@ help:
 clean:
 	-rm -rf $(BUILDDIR)/*
 
+htmlrelease:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ../html
+	@echo
+	@echo "Build finished. The HTML pages are in ../html."
+
+latexpdfrelease:
+	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) ../latex
+	@echo "Running LaTeX files through pdflatex..."
+	$(MAKE) -C ../latex all-pdf
+	@echo "pdflatex finished; the PDF files are in ../latex."
+
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
