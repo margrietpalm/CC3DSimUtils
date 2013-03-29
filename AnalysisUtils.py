@@ -128,8 +128,7 @@ def getLocalOrderParameter(sigma,angles,r):
             continue
         a = angles[np.where(sigma==id)][0]
         A = getDirector(getCoM(np.where(sigma==id)),r,sigma,angles)        
-        dA = abs(a-A) if abs(a-A) < 90 else 180-abs(a-A)
-        #~ s += (3*np.power(np.cos(dA),2)-1)/2.0
+        dA = abs(a-A) if abs(a-A) < 0.5*np.pi else np.pi-abs(a-A)        
         s += np.cos(2*dA)        
         n += 1
     return s/n
@@ -144,9 +143,8 @@ def getGlobalOrderParameter(sigma,angles):
     a = angles[np.where(sigma>0)]
     A = np.mean(a)
     dA = np.abs(a-A)
-    dA[dA > 90] = np.abs(dA[dA > 90]-180)
+    dA[dA > .5*np.pi] = np.abs(dA[dA > .5*np.pi]-np.pi)    
     return np.mean(np.cos(2*dA))    
-    #~ return np.mean((3*np.power(np.cos(dA),2)-1)/2.0)
 
 def getDirector(com,r,sigma,angles):
     """ Find the director of the center of mass of a cell. 
