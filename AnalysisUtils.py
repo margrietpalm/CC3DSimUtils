@@ -93,112 +93,167 @@ def getAngleField(sigma):
             continue
         angles[sigma==id] = getCellAngle(np.where(sigma==id))
     return angles
-    
-def getOrderParameter(sigma,angles,r):
-    """ Calculate order parameter for a morphology using the cpm grid data. When the requested radius is larger than the maximum radius of the grid, the global order parameter is calculated with :func:`~AnalysisUtils.getGlobalOrderParameter`; otherwise the local order parameter is calculated with :func:`~AnalysisUtils.getLocalOrderParameter`.
-    
-    :param sigma: numpy array with cell id's
-    :param angles: numpy array with cell angles (radians)
-    :param r: radius of neighborhood    
-    :type r: int
-    
-    .. seealso:: :func:`~AnalysisUtils.getLocalOrderParameter`, :func:`~AnalysisUtils.getGlobalOrderParameter`
-    """    
-    (nx,ny) = sigma.shape
-    if r < np.sqrt(nx**2+ny**2):
-        return getLocalOrderParameter(sigma,angles,r)
-    else:
-        return getGlobalOrderParameter(sigma,angles)
 
-def getLocalOrderParameter(sigma,angles,r):
-    """ Calculate local order parameter.
+def getDoubledOrientationField(sigma):
+    """ Get field with the doubled cell orientations. By doubling the orientations we map the orientations on the domain :math:`[0,2\pi)`.
     
-    :param sigma: numpy array with cell id's
-    :param angles: numpy array with cell angles (radians)
-    :param r: radius of neighborhood    
-    :type r: int   
-    :return: local order parameter
+    :param sigma: CPM grid
+    :return: field with doubled orientations
+    """    
+    orients = np.zeros((sigma.shape[0],sigma.shape[1],2))    
+    for id in np.unique(sigma):
+        if id == 0:
+            continue
+        vec = np.array(getCellOrientation(np.where(sigma==id)))
+        # remap orientation vectors on 0-pi
+        if vec[1] < 0:
+            vec = -1*vec
+        orients[sigma==id] = [vec[0]*vec[1]*2,vec[0]*vec[0]-vec[1]*vec[1]]
+    return orients
     
-    .. seealso:: :func:`~AnalysisUtils.getDirector`
+def getOrientationField(sigma):
+    """ Get field with the cell orientations. 
+    
+    :param sigma: CPM grid
+    :return: field with orientations
+    """      
+    orients = np.zeros((sigma.shape[0],sigma.shape[1],2))    
+    for id in np.unique(sigma):
+        if id == 0:
+            continue
+        vec = np.array(getCellOrientation(np.where(sigma==id)))
+        # remap orientation vectors on 0-pi
+        if vec[1] < 0:
+            vec = -1*vec
+        orients[sigma==id] = vec
+    return orients
+
+def getDirector(pos,r,sigma,orientations):
+    """ Calculate the director at a given position. The director is the mean direction of all cells within a radius r. Because we represent the direction of cells as vectors, the mean direction is the resulting vector.  
+        
+    :param com: position (x,y) for which the order parameter is calculated
+    :param r: radius of neighborhood
+    :param sigma: CPM grid
+    :param orientations: array with doubled cell orientations (as returned by :func:`~CC3DSimUtils.AnalysisUtils.getDoubledOrientationField`)
+    :return: vector representing the director director
+    """    
+    # cut out part of grid we are interested in
+    xmin = 0 if (com[0]-r) < 0 else int(np.floor(com[0]-r))
+    xmax = sigma.shape[0] if (com[0]+r+1) > sigma.shape[0] else int(np.ceil(com[0]+r+1))
+    ymin = 0 if (com[1]-r) < 0 else int(np.floor(com[1]-r))
+    ymax = sigma.shape[1] if (com[1]+r+1) > sigma.shape[1] else int(np.ceil(com[1]+r+1))
+    sigma = sigma[xmin:xmax,ymin:ymax]
+    orientations = orientations[xmin:xmax,ymin:ymax,:]
+    (x,y) = np.mgrid[xmin:xmax,ymin:ymax]
+    # calculate distances on the grid to find pixels within the circle
+    d = np.sqrt(np.power(x-com[0],2)+np.power(y-com[1],2))
+    # select angles within r
+    sa = sigma[d<=r].astype(np.int)
+    cells = np.unique(sa[sa>0])
+    o = np.array([orientations[np.where(sigma==id)][0] for id in cells])
+    bins = np.bincount(sa[sa>0])
+    w = bins[bins>0]
+    sx = np.sum(w*o[:,0])
+    sy = np.sum(w*o[:,1])    
+    if np.linalg.norm([sx,sy]) > 0:
+        return [sx,sy]/np.linalg.norm([sx,sy])
+    else:
+        return [sx,sy]
+
+def getOrderParameter(sigma,orientations,r):
+    """ Calculate order parameter for a morphology. 
+    
+    :param sigma: CPM grid
+    :param orientations: array with doubled cell orientations (as returned by :func:`~CC3DSimUtils.AnalysisUtils.getDoubledOrientationField`)    
+    :param r: radius of neighborhood
+    :return: order parameter    
+    
+    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getLocalOrderParameter2D`, :func:`~CC3DSimUtils.AnalysisUtils.getGlobalOrderParameter2D`
+    """       
+    (nx,ny) = sigma.shape
+    rmax = np.sqrt(nx**2+ny**2)
+    if r < rmax:
+        return getLocalOrderParameter2D(sigma,orientations,r)
+    else:
+        return getGlobalOrderParameter2D(sigma,orientations)    
+
+def getGlobalOrderParameter(sigma,orientations):
+    """ Calculate order parameter for a morphology using a radius larger than the diagonal of the CPM grid.
+    
+    :param sigma: CPM grid
+    :param orientations: array with doubled cell orientations (as returned by :func:`~CC3DSimUtils.AnalysisUtils.getDoubledOrientationField`)    
+    :return: order parameter    
+    
+    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getOrderParameter2D`
     """     
+    cells = np.unique(sigma[sigma>0])
+    bins = np.bincount(sigma[sigma>0].astype(np.int))
+    w = bins[bins>0]  
+    o = np.array([orientations[np.where(sigma==id)][0] for id in cells])
+    sx = np.sum(w*o[:,0])
+    sy = np.sum(w*o[:,1])    
+    A = [sx,sy]/np.linalg.norm([sx,sy])
+    s = 0.
+    n = 0.
+    for id in cells:
+        a = orientations[np.where(sigma==id)][0]
+        dA = getAngle(a,A)
+        s += np.cos(dA)
+        n += 1
+    return s/n
+    
+def getLocalOrderParameter(sigma,orientations,r):
+    """ Calculate order parameter for a morphology. 
+    
+    :param sigma: CPM grid
+    :param orientations: array with doubled cell orientations (as returned by :func:`~CC3DSimUtils.AnalysisUtils.getDoubledOrientationField`)    
+    :param r: radius of neighborhood
+    :return: order parameter    
+    
+    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getOrderParameter2D`, :func:`~CC3DSimUtils.AnalysisUtils.getDirector2D`
+
+    """          
     s = 0
     n = 0
     for id in np.unique(sigma):
         if id == 0:
             continue
-        a = angles[np.where(sigma==id)][0]
-        A = getDirector(getCoM(np.where(sigma==id)),r,sigma,angles)        
-        dA = abs(a-A) if abs(a-A) < 0.5*np.pi else np.pi-abs(a-A)        
-        s += np.cos(2*dA)        
+        a = orientations[np.where(sigma==id)][0]
+        A = getDirector2D(getCoM(np.where(sigma==id)),r,sigma,orientations)        
+        dA = getAngle(a,A)
+        s += np.cos(dA)
         n += 1
     return s/n
-
-def getGlobalOrderParameter(sigma,angles):
-    """ Calculate global order parameter.
-    
-    :param sigma: numpy array with cell id's
-    :param angles: numpy array with cell angles (radians)
-    :return: global order parameter    
-    """      
-    a = angles[np.where(sigma>0)]
-    A = np.mean(a)
-    dA = np.abs(a-A)
-    dA[dA > .5*np.pi] = np.abs(dA[dA > .5*np.pi]-np.pi)    
-    return np.mean(np.cos(2*dA))    
-
-def getDirector(com,r,sigma,angles):
-    """ Find the director of the center of mass of a cell. 
-        
-    :param com: center of mass of the cell (x,y)
-    :param r: radius of neighborhood
-    :type r: number
-    :param sigma: numpy array with cell id's
-    :param angles: numpy array with cell angles (radians)
-    :return: director (radians)    
-    """
-    # Because we only need the pixels within a radius r from com, we create new
-    # array sigma and angles that only contain pixels within this range.
-    xmin = 0 if (com[0]-r) < 0 else int(np.floor(com[0]-r))
-    xmax = sigma.shape[0] if (com[0]+r) > sigma.shape[0] else int(np.ceil(com[0]+r))
-    ymin = 0 if (com[1]-r) < 0 else int(np.floor(com[1]-r))
-    ymax = sigma.shape[1] if (com[1]+r) > sigma.shape[1] else int(np.ceil(com[1]+r))        
-    sigma = sigma[xmin:xmax,ymin:ymax]
-    angles = angles[xmin:xmax,ymin:ymax]
-    (x,y) = np.mgrid[xmin:xmax,ymin:ymax]
-    # calculate distances between all pixels and com
-    d = np.sqrt(np.power(x-com[0],2)+np.power(y-com[1],2))
-    # find all angles at pixels within radius r and sigma > 0
-    sa = sigma[d<=r]
-    a = angles[d<=r]
-    an = a[sa>0]    
-    if len(an) > 0:
-        return np.sum(an)/len(an)
-    else:
-        return np.sum(an)
 
 def getRelativeDirField(sigma,r):
     """ Calculate field with relative director for each pixel. The relative director is the difference to the angle of the cell at that pixel and the relative director on the pixel. Pixels with high values represent unordered areas, such as branchpoints.
     
-    :param sigma: numpy array with cell id's
-    :param r: radius of neighborhood    
-    :type r: int   
+    :param sigma: CPM grid
+    :param r: radius used for calculating the director
     :return: field with relative director values
     
-    .. seealso:: :func:`~AnalysisUtils.getDirector`, :func:`~AnalysisUtils.getAngleField`
+    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getDoubledOrientationField`
     """
-    angles = getAngleField(sigma)    
-    dir = np.zeros(sigma.shape)    
+    orientations = getDoubledOrientationField(sigma)  
+    da = np.zeros_like(sigma)
     # calculate director at every pixel
     (nx,ny) = sigma.shape    
     for i in range(nx):
         for j in range(ny):
             if sigma[i,j] > 0:
-                dir[i,j] = getDirector((i,j),r,sigma,angles)
-    # calcuate local difference between director and cell angles
-    a = copy.deepcopy(angles)
-    field = np.abs(dir-a)
-    field[np.where(field>0.5*np.pi)] = np.pi-field[np.where(field>0.5*np.pi)]
-    return field
+                dir = getDirector2D((i,j),r,sigma,orientations)
+                da[i,j] = getAngle(dir,orientations[i,j])/2.
+    return da    
+
+def getCellAngle(pix):
+    """ Calculate angle of a cell on interval :math:`[0,\pi]`
+    
+    :param pix: cell coordinates ([x1,...,xn],[y1,...,yn])
+    :return: angle in radians on interval :math:`[0,\pi]`
+    """
+    l = np.array(getCellOrientation(pix))
+    a = np.arctan2(l[1],l[0])
+    return a%np.pi
     
 def realconvexhull(bwimg):
     """ 

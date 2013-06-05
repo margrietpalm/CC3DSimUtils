@@ -13,7 +13,7 @@
 
 
 \title{CC3DSimUtils Documentation}
-\date{March 28, 2013}
+\date{June 05, 2013}
 \release{1.0}
 \author{Margriet Palm}
 \newcommand{\sphinxlogo}{}
@@ -205,7 +205,7 @@ image with largest connected component
 
 \section{Order parameter}
 \label{AnalysisUtils:order-parameter}
-The \href{http://en.wikipedia.org/wiki/Liquid\_crystal\#Order\_parameter}{order parameter} describes the orientational order of a liquid crystal : $s = \left \langle \text{cos}(2 \theta)\right \rangle$; $s = 0\;$ for a random sample and $s = 1\;$ for an isotropic sample. $\theta\;$ is the angle between the cell direction and the \href{http://en.wikipedia.org/wiki/Liquid\_crystal\#Director}{director}. The director is a dimensionless unit vector. It represents the direction of preferred orientation of cells in the neighborhood of any point. Because there is no physical polarity along the director axis, n and -n are fully equivalent. Here the neighborhood is defined as a circle with center com and radius r.
+The order parameter describes the orientational order of a liquid crystal:  $S(r)=\left \langle \cos(2 \theta(\vec{X}(\sigma),r)) \right\rangle_\sigma$ where $\theta(\vec{X}(\sigma),r)$ denotes the angle between the cell with center of mass $X$ and the director in a circle of radius $r$ around $X$.
 \index{getDirector() (in module AnalysisUtils)}
 
 \begin{fulllineitems}

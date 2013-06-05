@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2010.3.2)  28 MAR 2013 16:08
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2010.3.2)  5 JUN 2013 10:14
 entering extended mode
  %&-line parsing enabled.
 **CC3DSimUtils.tex
@@ -900,11 +900,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 72--73
 Here is how much of TeX's memory you used:
  6699 strings out of 256216
  87332 string characters out of 1917073
- 156088 words of memory out of 1500000
+ 156087 words of memory out of 1500000
  9715 multiletter control sequences out of 10000+200000
  57809 words of font info for 65 fonts, out of 1200000 for 2000
  646 hyphenation exceptions out of 8191
- 34i,11n,45p,754b,681s stack positions out of 5000i,500n,6000p,200000b,15000s
+ 34i,12n,45p,512b,681s stack positions out of 5000i,500n,6000p,200000b,15000s
 {/usr/share/texmf/fonts/enc/dvips/base/8r.enc}</usr/sh
 are/texmf/fonts/type1/bluesky/cm/cmex10.pfb></usr/share/texmf/fonts/type1/blues
 ky/cm/cmmi10.pfb></usr/share/texmf/fonts/type1/bluesky/cm/cmmi7.pfb></usr/share
@@ -916,9 +916,9 @@ xmf/fonts/type1/urw/helvetic/uhvbo8a.pfb></usr/share/texmf/fonts/type1/urw/helv
 etic/uhvr8a.pfb></usr/share/texmf/fonts/type1/urw/times/utmb8a.pfb></usr/share/
 texmf/fonts/type1/urw/times/utmr8a.pfb></usr/share/texmf/fonts/type1/urw/times/
 utmri8a.pfb>
-Output written on CC3DSimUtils.pdf (31 pages, 199598 bytes).
+Output written on CC3DSimUtils.pdf (31 pages, 200970 bytes).
 PDF statistics:
- 477 PDF objects out of 1000 (max. 8388607)
+ 475 PDF objects out of 1000 (max. 8388607)
  117 named destinations out of 1000 (max. 131072)
  177 words of extra memory for PDF output out of 10000 (max. 10000000)
 

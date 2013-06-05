@@ -11,7 +11,7 @@ Compactness
 ------------------------------
 Order parameter
 ------------------------------
-The `order parameter <http://en.wikipedia.org/wiki/Liquid_crystal#Order_parameter>`_ describes the orientational order of a liquid crystal : :math:`s = \left \langle \text{cos}(2 \theta)\right \rangle`; :math:`s = 0\;` for a random sample and :math:`s = 1\;` for an isotropic sample. :math:`\theta\;` is the angle between the cell direction and the `director <http://en.wikipedia.org/wiki/Liquid_crystal#Director>`_. The director is a dimensionless unit vector. It represents the direction of preferred orientation of cells in the neighborhood of any point. Because there is no physical polarity along the director axis, n and -n are fully equivalent. Here the neighborhood is defined as a circle with center com and radius r. 
+The order parameter describes the orientational order of a liquid crystal:  :math:`S(r)=\left \langle \cos(2 \theta(\vec{X}(\sigma),r)) \right\rangle_\sigma` where :math:`\theta(\vec{X}(\sigma),r)` denotes the angle between the cell with center of mass :math:`X` and the director in a circle of radius :math:`r` around :math:`X`.
 
 .. autofunction:: AnalysisUtils.getDirector
 .. autofunction:: AnalysisUtils.getOrderParameter

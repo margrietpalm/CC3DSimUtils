@@ -186,14 +186,14 @@ def getOrderParameterForSim(id,trange,inpath,radii,gzipped=False,border=True,out
     f.write('#MCS')
     for r in radii:
         f.write('\t'+str(r))
-    f.write('\n')
+    f.write('\n')  
     for i,t in enumerate(trange):
         sigma = readSigma(id,t,inpath,gzipped,border)
         (nx,ny) = sigma.shape
         data[i,0] = t
-        angles = getAngleField(sigma)
+        orients = getDoubledOrientationField(sigma)
         for j,r in enumerate(radii):
-            data[i,j+1] = getOrderParameter(sigma,angles,r)          
+            data[i,j+1] = getOrderParameter(sigma,orients,r)          
     np.savetxt(f,data)
     f.close()
     print 'Order parameter calculated for '+str(len(trange))+' simulations and '+str(len(radii))+' radii in '+str(time.time()-t0)+' seconds'
