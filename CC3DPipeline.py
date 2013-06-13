@@ -196,7 +196,7 @@ def getOrderParameterForSim(id,trange,inpath,radii,gzipped=False,border=True,out
             data[i,j+1] = getOrderParameter(sigma,orients,r)          
     np.savetxt(f,data)
     f.close()
-    print 'Order parameter calculated for '+str(len(trange))+' simulations and '+str(len(radii))+' radii in '+str(time.time()-t0)+' seconds'
+    print 'Order parameter calculated for '+str(len(trange))+' time steps and '+str(len(radii))+' radii in '+str(time.time()-t0)+' seconds'
 
 def getCompactnessForSim(id,trange,inpath,gzipped=False,border=True,outpath=None):
     """ Calculate compactness for one simulation, the compactness is in a file: outpath/id_compactness.data

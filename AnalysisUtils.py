@@ -28,6 +28,14 @@ from Readers import *
 norm = lambda v: np.array(v)/np.linalg.norm(np.array(v))
 angle = lambda x,y: np.arccos(np.dot(x,y)/(np.linalg.norm(x)*np.linalg.norm(y)))
 
+
+def getAngle(v1,v2):
+    arg = np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
+    # catch numerical errors
+    if arg > 1:
+        arg = np.floor(arg)
+    return np.arccos(arg)
+
 def getCoM(pix):
     """ Calculate center of mass of a cell 
     
@@ -131,22 +139,22 @@ def getOrientationField(sigma):
 def getDirector(pos,r,sigma,orientations):
     """ Calculate the director at a given position. The director is the mean direction of all cells within a radius r. Because we represent the direction of cells as vectors, the mean direction is the resulting vector.  
         
-    :param com: position (x,y) for which the order parameter is calculated
+    :param pos: position (x,y) for which the order parameter is calculated
     :param r: radius of neighborhood
     :param sigma: CPM grid
     :param orientations: array with doubled cell orientations (as returned by :func:`~CC3DSimUtils.AnalysisUtils.getDoubledOrientationField`)
     :return: vector representing the director director
     """    
     # cut out part of grid we are interested in
-    xmin = 0 if (com[0]-r) < 0 else int(np.floor(com[0]-r))
-    xmax = sigma.shape[0] if (com[0]+r+1) > sigma.shape[0] else int(np.ceil(com[0]+r+1))
-    ymin = 0 if (com[1]-r) < 0 else int(np.floor(com[1]-r))
-    ymax = sigma.shape[1] if (com[1]+r+1) > sigma.shape[1] else int(np.ceil(com[1]+r+1))
+    xmin = 0 if (pos[0]-r) < 0 else int(np.floor(pos[0]-r))
+    xmax = sigma.shape[0] if (pos[0]+r+1) > sigma.shape[0] else int(np.ceil(pos[0]+r+1))
+    ymin = 0 if (pos[1]-r) < 0 else int(np.floor(pos[1]-r))
+    ymax = sigma.shape[1] if (pos[1]+r+1) > sigma.shape[1] else int(np.ceil(pos[1]+r+1))
     sigma = sigma[xmin:xmax,ymin:ymax]
     orientations = orientations[xmin:xmax,ymin:ymax,:]
     (x,y) = np.mgrid[xmin:xmax,ymin:ymax]
     # calculate distances on the grid to find pixels within the circle
-    d = np.sqrt(np.power(x-com[0],2)+np.power(y-com[1],2))
+    d = np.sqrt(np.power(x-pos[0],2)+np.power(y-pos[1],2))
     # select angles within r
     sa = sigma[d<=r].astype(np.int)
     cells = np.unique(sa[sa>0])
@@ -168,14 +176,14 @@ def getOrderParameter(sigma,orientations,r):
     :param r: radius of neighborhood
     :return: order parameter    
     
-    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getLocalOrderParameter2D`, :func:`~CC3DSimUtils.AnalysisUtils.getGlobalOrderParameter2D`
+    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getLocalOrderParameter`, :func:`~CC3DSimUtils.AnalysisUtils.getGlobalOrderParameter`
     """       
     (nx,ny) = sigma.shape
     rmax = np.sqrt(nx**2+ny**2)
     if r < rmax:
-        return getLocalOrderParameter2D(sigma,orientations,r)
+        return getLocalOrderParameter(sigma,orientations,r)
     else:
-        return getGlobalOrderParameter2D(sigma,orientations)    
+        return getGlobalOrderParameter(sigma,orientations)    
 
 def getGlobalOrderParameter(sigma,orientations):
     """ Calculate order parameter for a morphology using a radius larger than the diagonal of the CPM grid.
@@ -184,7 +192,7 @@ def getGlobalOrderParameter(sigma,orientations):
     :param orientations: array with doubled cell orientations (as returned by :func:`~CC3DSimUtils.AnalysisUtils.getDoubledOrientationField`)    
     :return: order parameter    
     
-    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getOrderParameter2D`
+    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getOrderParameter`
     """     
     cells = np.unique(sigma[sigma>0])
     bins = np.bincount(sigma[sigma>0].astype(np.int))
@@ -210,7 +218,7 @@ def getLocalOrderParameter(sigma,orientations,r):
     :param r: radius of neighborhood
     :return: order parameter    
     
-    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getOrderParameter2D`, :func:`~CC3DSimUtils.AnalysisUtils.getDirector2D`
+    .. seealso:: :func:`~CC3DSimUtils.AnalysisUtils.getOrderParameter`, :func:`~CC3DSimUtils.AnalysisUtils.getDirector`
 
     """          
     s = 0
@@ -219,7 +227,7 @@ def getLocalOrderParameter(sigma,orientations,r):
         if id == 0:
             continue
         a = orientations[np.where(sigma==id)][0]
-        A = getDirector2D(getCoM(np.where(sigma==id)),r,sigma,orientations)        
+        A = getDirector(getCoM(np.where(sigma==id)),r,sigma,orientations)        
         dA = getAngle(a,A)
         s += np.cos(dA)
         n += 1
@@ -241,7 +249,7 @@ def getRelativeDirField(sigma,r):
     for i in range(nx):
         for j in range(ny):
             if sigma[i,j] > 0:
-                dir = getDirector2D((i,j),r,sigma,orientations)
+                dir = getDirector((i,j),r,sigma,orientations)
                 da[i,j] = getAngle(dir,orientations[i,j])/2.
     return da    
 
