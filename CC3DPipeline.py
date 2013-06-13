@@ -23,6 +23,7 @@ import numpy as np
 from Readers import *
 from AnalysisUtils import *
 from ImageUtils import *
+import gzip
 
 #----- Pre-processing ----#
 def createPBSScripts(runid,joblist,command,time,ncores=8,ppn=8,path='clusterScripts/'):
