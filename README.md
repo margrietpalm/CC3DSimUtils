@@ -16,6 +16,7 @@ Please see the [documentation](#documentation) for more extensive installation i
 4. Make sure python can find CC3DSimUtils (use a OR b).
 	a. Add the path to CC3DSimUtils to the global pythonpath.
 	b. Add the path to CC3DSimUtils to the pythonpath in your python code:
+	
 		```
 		import sys
 		sys.path.append('PATHTOCC3DSIMUTILS')
