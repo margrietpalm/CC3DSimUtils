@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'CC3DSimUtils'
 
 # General information about the project.
-project = u'MIMB SimUtils'
+project = u'CC3D SimUtils'
 copyright = u'2013, Margriet Palm'
 
 # The version info for the project you're documenting, acts as replacement for

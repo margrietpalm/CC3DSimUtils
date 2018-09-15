@@ -1,7 +1,7 @@
 =================
 Prerequisites
 =================
-MIMBSimUtils depends on a number of python packages which must be installed. 
+CC3DSimUtils depends on a number of python packages which must be installed. 
 
 -----------------
 Numpy
