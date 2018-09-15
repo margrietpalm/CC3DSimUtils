@@ -2,7 +2,7 @@ Python library for setting up, running and analyzing parameter sweeps with cell 
 
 
 # Installation
-Please see the [documentation](#Documentation) for more extensive installation instructions.
+Please see the [documentation](#documentation) for more extensive installation instructions.
 
 1. Install python 2.x
 2. Install prerequisites
@@ -19,5 +19,5 @@ Please see the [documentation](#Documentation) for more extensive installation i
 		sys.path.append('PATHTOCC3DSIMUTILS')
 
 # Documentation
-HTML documentation: doc/html/CC3DSimUtils.html
-PDF documentation: [doc/latex/CC3DSimUtils.pdf](https://github.com/margrietpalm/CC3DSimUtils/blob/master/doc/latex/CC3DSimUtils.pdf)
+* HTML documentation: doc/html/CC3DSimUtils.html
+* PDF documentation: [doc/latex/CC3DSimUtils.pdf](https://github.com/margrietpalm/CC3DSimUtils/blob/master/doc/latex/CC3DSimUtils.pdf)
