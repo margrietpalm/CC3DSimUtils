@@ -17,10 +17,10 @@ Please see the [documentation](#documentation) for more extensive installation i
 	a. Add the path to CC3DSimUtils to the global pythonpath.
 	b. Add the path to CC3DSimUtils to the pythonpath in your python code:
 	
-		```
-		import sys
-		sys.path.append('PATHTOCC3DSIMUTILS')
-		```
+```
+import sys
+sys.path.append('PATHTOCC3DSIMUTILS')
+```
 		
 # Documentation
 * HTML documentation: doc/html/CC3DSimUtils.html
